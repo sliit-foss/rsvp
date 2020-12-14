@@ -1,0 +1,44 @@
+{
+  "name": "rsvp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clean && npm run build-babel",
+    "build-babel": "babel -d ./build ./src -s",
+    "clean": "rm -rf .nyc_output build coverage && mkdir build",
+    "dev": "cross-env DEBUG=dev nodemon --exec babel-node src/index.js",
+    "start": "node ./build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sliit-foss/rsvp.git"
+  },
+  "author": "SLIIT FOSS Community",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sliit-foss/rsvp/issues"
+  },
+  "homepage": "https://github.com/sliit-foss/rsvp#readme",
+  "dependencies": {
+    "@babel/register": "^7.12.10",
+    "@babel/runtime": "^7.12.5",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "debug": "^4.3.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.7",
+    "morgan": "^1.10.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "nodemon": "^2.0.6"
+  }
+}
