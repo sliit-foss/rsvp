@@ -28,25 +28,7 @@ _See the guide for more details [Link](https://docs.github.com/en/free-pro-team@
 
 [Read More](https://github.com/sliit-foss/zero2hero/blob/master/docs/git/git.md)
 
-## Development server
-
-Run `yarn dev` for a dev server. Navigate to `http://localhost:3000/`. The app will automatically reload if you change any of the source files.
-
-## Build
-
-Run `yarn build` to build the project. The build artifacts will be stored in the `build/` directory.
-<!--
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
--->
-
 ## Note
-
 
 1. Use [semantic comments](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716)
 2. Write documentation ([jsdocs](https://jsdoc.app/))
