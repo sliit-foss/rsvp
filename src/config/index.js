@@ -2,6 +2,7 @@ require('dotenv').config();
 
 export const PORT = process.env.PORT || 3000;
 export const NODE_ENV = process.env.NODE_ENV || 'development';
+export const VERSION = process.env.VERSION || '0.1.0';
 
 /**
  * @constant DB_CONNECTION_STRING database connection string
