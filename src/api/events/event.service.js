@@ -29,6 +29,9 @@ const createEvent = ({
     return event.save();
 };
 
+const getEventById = id => Event.findById(id);
+
 export default {
     createEvent,
+    getEventById
 };
