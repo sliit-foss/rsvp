@@ -29,9 +29,27 @@ const createEvent = ({
     return event.save();
 };
 
+/**
+ *
+ * @param id
+ * @returns {Query<Document | null, Document>}
+ */
 const getEventById = id => Event.findById(id);
+
+/**
+ *
+ * @param perpage
+ * @param page
+ * @returns {Query<Array<Document>, Document>}
+ */
+const getAllEvents = (perpage, page) =>
+    Event
+    .find()
+    .limit(perpage)
+    .skip((page - 1) * page);
 
 export default {
     createEvent,
-    getEventById
+    getEventById,
+    getAllEvents
 };

@@ -48,7 +48,8 @@ const getEventById = async (req, res) => {
  */
 const getAllEvents = async (req, res) => {
    try {
-
+        const events = await EventService.getAllEvents(req.query.perpage, req.query.page);
+        return res.status(HTTP_STATUS.OK).json(events);
    } catch (err) {
        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
            error: err.message
@@ -59,4 +60,5 @@ const getAllEvents = async (req, res) => {
 export default {
     createEvent,
     getEventById,
+    getAllEvents
 };
