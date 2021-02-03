@@ -47,10 +47,12 @@ const getEventById = async (req, res) => {
  * @returns {Promise<void>}
  */
 const getAllEvents = async (req, res) => {
+    logger.info('event.controller.js getAllEvents()');
    try {
         const events = await EventService.getAllEvents(req.query.perpage, req.query.page);
         return res.status(HTTP_STATUS.OK).json(events);
    } catch (err) {
+       logger.error('event.controller.js getAllEvents(): ' + err.message);
        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
            error: err.message
        });
