@@ -1,0 +1,6 @@
+node_modules
+logs
+build
+.idea
+.github
+test
