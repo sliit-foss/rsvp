@@ -2,7 +2,7 @@
 
 GET	{{domain}}/user	-	Get list of attendees
 GET	{{domain}}/user/:id	-	Get a attendee by id
-POST	{{domain}}/user/:id	-	Create a attendee
+POST	{{domain}}/user	-	Create a attendee
 
 # Auth
 
