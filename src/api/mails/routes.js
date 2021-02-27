@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import MailController from './mail.controller';
-const router = Router();
+import bodyParser from 'body-parser';
 
-router.post('/', MailController.sendMail);
+const router = Router();
+var jsonParser = bodyParser.json()
+
+router.post('/',jsonParser, MailController.sendMail);
+router.get('/availability',MailController.checkAvailability);
 
 export default router;
