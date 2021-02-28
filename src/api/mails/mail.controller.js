@@ -30,7 +30,6 @@ const sendMail = async(req, res, next) => {
 
     try {
       
-
        var mailOptions = {
         from: ClientConst.CREDENTIALS.USER,
         to: req.body.recivers,
@@ -39,7 +38,6 @@ const sendMail = async(req, res, next) => {
         html: req.body.html
     };
 
-    
     transport.sendMail(mailOptions, (error, info) => {
         if (error) {
 
@@ -48,15 +46,10 @@ const sendMail = async(req, res, next) => {
         }
         else{
 
-            
-        logger.info('Message sent: ', info.messageId);
-        return res.status(HTTP_STATUS.OK).json({"success": true, "messageid" : info.messageId , "error" : ""  });
+            logger.info('Message sent: ', info.messageId);
+            return res.status(HTTP_STATUS.OK).json({"success": true, "messageid" : info.messageId , "error" : ""  });
 
-        }
-
-        
-        });
-
+        }});
 
     } catch (err) {
         logger.error('mail.controller.js sendMail(): ' + err.message);
@@ -85,9 +78,7 @@ try {
             "error": err.message
         });
     
-}
-
-};
+}};
 
 
 export default {

@@ -9,6 +9,6 @@ const router = Router();
 router.get('/health', handleHealthRequest);
 router.use('/events', eventsRouter);
 router.use('/', authRouter);
-router.use('/api/v1/mail', mailRouter);
+router.use('/mail', mailRouter);
 
 export default router;

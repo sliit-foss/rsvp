@@ -1,5 +1,3 @@
-
-
 const CREDENTIALS = {
     HOST: 'smtp.mailtrap.io',
     PORT: '2525',
