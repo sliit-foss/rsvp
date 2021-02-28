@@ -1,12 +1,14 @@
-import { Router } from 'express';
-import eventsRouter from './events/routes';
-import authRouter from './auth/routes';
-import { handleHealthRequest } from './health';
+import { Router } from "express";
+import attendeeRouter from "./attendee/routes";
+import eventsRouter from "./events/routes";
+import authRouter from "./auth/routes";
+import { handleHealthRequest } from "./health";
 
 const router = Router();
 
-router.get('/health', handleHealthRequest);
-router.use('/events', eventsRouter);
-router.use('/', authRouter);
+router.get("/health", handleHealthRequest);
+router.use("/user", attendeeRouter);
+router.use("/events", eventsRouter);
+router.use("/", authRouter);
 
 export default router;
