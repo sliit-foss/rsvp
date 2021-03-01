@@ -1,8 +1,10 @@
+import * as config from '../../config';
+
 const CREDENTIALS = {
-  HOST: "smtp.mailtrap.io",
-  PORT: "2525",
-  USER: "c8cca3941aea9c",
-  PASSWORD: "18763bafd470a9",
+  HOST: config.MAIL.HOST,
+  PORT: config.MAIL.PORT,
+  USER: config.MAIL.USER,
+  PASSWORD: config.MAIL.PASSWORD,
 };
 
 export default {
