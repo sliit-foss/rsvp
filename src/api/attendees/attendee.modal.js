@@ -10,7 +10,7 @@ const attendeeSchema = new Schema(
     lastName: { type: String, required: true },
     email: { type: String, required: true },
     contactNo: { type: String, required: true },
-    privilege: { type: String, required: true },
+    previlege: { type: String, required: true },
   },
   { timestamps: true }
 );

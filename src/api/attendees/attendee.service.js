@@ -1,4 +1,4 @@
-import Attendee from "./attendee.modal";
+import Attendee from './attendee.modal';
 
 /**
  * Create event in db
@@ -38,10 +38,14 @@ const getAttendeeById = (id) => Attendee.findById(id);
 
 /**
  *
- * @returns {Query<Document | null, Document>}
+ * 
+ * @returns {Query<Array<Document>, Document>}
  */
 
-const getAllAttendees = () => Attendee.find();
+const getAllAttendees = () =>
+  Attendee
+    .find();
+
 
 export default {
   createAttendee,
