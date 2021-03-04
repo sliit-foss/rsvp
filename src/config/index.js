@@ -14,7 +14,7 @@ export const VERSION = process.env.VERSION || '0.1.0';
  * @constant DB_CONNECTION_STRING database connection string
  * @example mongodb://localhost:27017/db_name
  */
-export const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://localhost:27017/rsvp';
+export const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://root:myfoss@localhost:27017/rsvp?authSource=admin';
 
 /**
  * @constant DB_HOST hostname of database. Can be an IP or an URI.
