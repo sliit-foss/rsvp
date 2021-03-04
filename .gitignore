@@ -2,3 +2,7 @@ node_modules
 build
 logs
 .idea/
+
+.env*
+
+npm-debug.log
