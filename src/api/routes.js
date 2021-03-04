@@ -1,5 +1,5 @@
 import { Router } from "express";
-import attendeeRouter from "./attendee/routes";
+import attendeeRouter from "./attendees/routes";
 import eventsRouter from "./events/routes";
 import authRouter from "./auth/routes";
 import { handleHealthRequest } from "./health";

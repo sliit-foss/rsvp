@@ -49,7 +49,7 @@ const getAttendeeById = async (req, res) => {
 const getAllAttendees = async (req, res) => {
   try {
     const attendees = AttendeeService.getAllAttendees();
-    return res.status(HTTP_STATUS.OK).json(attendees);
+    return res.status(HTTP_STATUS.OK).json({"fname":attendees[0]});
   } catch (err) {
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: err.message,
