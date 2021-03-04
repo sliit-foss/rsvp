@@ -48,7 +48,7 @@ const getAttendeeById = async (req, res) => {
 
 const getAllAttendees = async (req, res) => {
   try {
-    const attendees = AttendeeService.getAllAttendees();
+    const attendees = await AttendeeService.getAllAttendees(req.query.perpage, req.query.page);
     return res.status(HTTP_STATUS.OK).json(attendees);
   } catch (err) {
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
