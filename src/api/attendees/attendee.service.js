@@ -11,21 +11,21 @@ import Attendee from './attendee.modal';
  */
 
 const createAttendee = ({
-  firstName,
-  lastName,
-  email,
-  contactNo,
-  previlege,
-}) => {
-  const attendee = new Attendee({
-    firstName,
-    lastName,
-    email,
-    contactNo,
-    previlege,
-  });
+                            firstName,
+                            lastName,
+                            email,
+                            contactNo,
+                            previlege,
+                        }) => {
+    const attendee = new Attendee({
+        firstName,
+        lastName,
+        email,
+        contactNo,
+        previlege,
+    });
 
-  return attendee.save();
+    return attendee.save();
 };
 
 /**
@@ -38,17 +38,19 @@ const getAttendeeById = (id) => Attendee.findById(id);
 
 /**
  *
- * 
+ * @param perpage
+ * @param page
  * @returns {Query<Array<Document>, Document>}
  */
 
-const getAllAttendees = () =>
-  Attendee
-    .find();
-
+const getAllAttendees = (perpage, page) =>
+    Attendee
+        .find()
+        .limit(parseInt(perpage))
+        .skip((parseInt(page) - 1) * parseInt(page));
 
 export default {
-  createAttendee,
-  getAttendeeById,
-  getAllAttendees,
+    createAttendee,
+    getAttendeeById,
+    getAllAttendees,
 };
