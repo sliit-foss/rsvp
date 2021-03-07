@@ -19,7 +19,7 @@ const createEvent = ({
                          name, description, headerImage,
                          photos, venue, fromDate, toDate,
                          status, speakers, createdBy, host
-}) => {
+                     }) => {
     const event = new Event({
         name, description, headerImage,
         photos, venue, fromDate, toDate,
@@ -44,9 +44,9 @@ const getEventById = id => Event.findById(id);
  */
 const getAllEvents = (perpage, page) =>
     Event
-    .find()
-    .limit(perpage)
-    .skip((page - 1) * page);
+        .find()
+        .limit(parseInt(perpage))
+        .skip((parseInt(page) - 1) * parseInt(page));
 
 export default {
     createEvent,
