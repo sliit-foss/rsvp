@@ -18,5 +18,4 @@ const eventSchema = new Schema({
     host: { type: String }, // TODO: change to object id, ref: host
 }, { timestamps: true });
 
-
 export default model('Event', eventSchema);
