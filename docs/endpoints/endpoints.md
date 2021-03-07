@@ -1,6 +1,6 @@
 # Attendees
 
-GET	{{domain}}/user	-	Get list of attendees
+GET	{{domain}}/user?perpage=2&page=6	-	Get list of attendees
 GET	{{domain}}/user/:id	-	Get a attendee by id
 POST	{{domain}}/user	-	Create a attendee
 
