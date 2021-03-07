@@ -6,11 +6,11 @@ import { Schema, model } from "mongoose";
  */
 const attendeeSchema = new Schema(
   {
-    firstName: { type: String, required: true, unique: true, lowercase: true },
-    lastName: { type: String, required: true, unique: true, lowercase: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
-    contactNo: { type: String, required: true, unique: true, lowercase: true },
-    previlege: { type: String, required: true, unique: true, lowercase: true },
+    contactNo: { type: String, required: true, unique: true },
+    previlege: { type: String, required: true },
   },
   { timestamps: true }
 );
