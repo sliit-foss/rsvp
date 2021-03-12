@@ -1,8 +1,9 @@
-import express from 'express';
-import bodyParser from 'body-parser';
+import express from "express";
+import bodyParser from "body-parser";
+import { HealthcheckerSimpleCheck } from "nodejs-health-checker/dist/healthchecker/healthchecker";
 //import cors from 'cors';
-import { default as connect } from './utils/database';
-import router from './api/routes';
+import { default as connect } from "./utils/database";
+import router from "./api/routes";
 
 const app = express();
 
@@ -11,7 +12,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //app.use(cors({ origin: true, credentials: true }));
-app.use('/', router);
+app.use("/", router);
+
+app.get("/health-check/liveness", (_, res) => {
+  res.send(HealthcheckerSimpleCheck());
+});
 
 connect();
 
