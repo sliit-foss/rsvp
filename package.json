@@ -45,6 +45,7 @@
     "mongoose": "^5.11.7",
     "morgan": "^1.10.0",
     "nodejs-health-checker": "^1.1.6",
+    ""
     "nodemailer": "^6.5.0",
     "prettier": "^2.2.1",
     "winston": "^3.3.3"

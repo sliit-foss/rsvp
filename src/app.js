@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 //app.use(cors({ origin: true, credentials: true }));
 app.use("/", router);
 
-app.get("/health-check/liveness", (_, res) => {
+app.get("/healthcheck", (_, res) => {
   res.send(HealthcheckerSimpleCheck());
 });
 
