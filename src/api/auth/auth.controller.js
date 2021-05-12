@@ -1,30 +1,35 @@
-const passport = require("passport");
-const User = require("./user.model");
-import { HTTP_STATUS } from "../../utils/http";
+import AuthService from "./auth.service";
+import {HTTP_STATUS} from "../../utils/http";
 import logger from "../../utils/logger";
+import passport from "passport";
 
-module.exports = {
-  async adminRegister(req, res, next) {
-    const newUser = new User({
-      username: req.body.username,
-      email: req.body.email,
-    });
+const adminRegister = async (req, res) => {
+    logger.info('auth.controller.js createAdmin(): ' + JSON.parse(req.body));
+    try {
+        const admin = await AuthService.createAdmin(req.body);
+        return res.status(HTTP_STATUS.CREATED).json(admin);
+    } catch (err) {
+        logger.error('auth.controller.js createAdmin(): ' + err.message);
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            error: err.message
+        });
+    }
+};
 
-    const user = await User.register(newUser, req.body.password);
-    res.json({user});
-  },
-
-  // Admin login
-  adminLogin(req, res, next) {
+const adminLogin = async (req, res, next) => {
     passport.authenticate("local", {
-      successRedirect: "/",
-      failureRedirect: "/login",
+        successRedirect: "/",
+        failureRedirect: "/login",
     })(req, res, next);
-  },
+};
 
-  // GET /logout
-  getLogout(req, res, next) {
+const adminLogout = async (req, res) => {
     req.logout();
     res.redirect("/");
-  },
+};
+
+export default {
+    adminRegister,
+    adminLogin,
+    adminLogout
 };

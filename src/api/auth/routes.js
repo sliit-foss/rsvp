@@ -1,8 +1,9 @@
 import { Router } from 'express';
-const {adminRegister , adminLogin} = require('./auth.controller')
+import AuthController from './auth.controller';
 const router = new Router();
 
-router.post('/signup' , adminRegister);
-router.get('/login' , adminLogin);
+router.post('/signup' , AuthController.adminRegister);
+router.get('/login' , AuthController.adminLogin);
+router.get('/logout' , AuthController.adminLogout);
 
 module.exports = router;
