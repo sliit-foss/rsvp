@@ -1,4 +1,4 @@
-name: Platformer Generated platformer-wflow Build
+name: Platformer Generated Staging Workflow Build
 'on':
   push:
     tags:
