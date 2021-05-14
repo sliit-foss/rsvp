@@ -7,7 +7,7 @@ import authRouter from './auth/routes';
 
 const router = Router();
 
-router.get('/health', handleHealthRequest);
+router.get('/healthz', handleHealthRequest);
 router.use("/user", attendeeRouter);
 router.use('/events', eventsRouter);
 router.use('/mail', mailRouter);

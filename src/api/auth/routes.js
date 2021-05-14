@@ -6,4 +6,4 @@ router.post('/signup' , AuthController.adminRegister);
 router.get('/login' , AuthController.adminLogin);
 router.get('/logout' , AuthController.adminLogout);
 
-module.exports = router;
+export default router;

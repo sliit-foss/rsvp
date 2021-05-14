@@ -8,7 +8,8 @@ import passportLocalMongoose from "passport-local-mongoose";
 const userSchema = new Schema(
     {
         username: String,
-        email: String
+        email: String,
+        password: String
     }
 );
 
