@@ -5,6 +5,7 @@ import session from 'express-session';
 import passport from 'passport';
 import {default as connect} from './utils/database';
 import router from './api/routes';
+import {SESSION_SECRET} from "./config";
 
 const app = express();
 
@@ -15,7 +16,7 @@ app.use(bodyParser.json());
 //ENABLING SESSION
 app.set('trust proxy', 1); // trust first proxy
 app.use(session({
-    secret: process.env.SECRET,
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
 }));
