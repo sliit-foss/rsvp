@@ -8,20 +8,16 @@ import User from "./user.model";
  * @returns {Promise<Document<any>>}
  */
 
-const createAdmin = ({
-                         username,
-                         email,
-                         password
-                     }) => {
-    const user = new User({
-        username,
-        email,
-        password
-    });
+const createAdmin = ({ username, email, password }) => {
+  const user = new User({
+    username,
+    email,
+    password,
+  });
 
-    return user.save();
+  return user.save();
 };
 
 export default {
-    createAdmin
+  createAdmin,
 };
