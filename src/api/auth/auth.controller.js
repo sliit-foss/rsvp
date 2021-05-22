@@ -4,7 +4,6 @@ import logger from "../../utils/logger";
 import passport from "passport";
 
 const adminRegister = async (req, res) => {
-    //logger.info('auth.controller.js createAdmin(): ' + JSON.parse(req.body));
     try {
         const admin = await AuthService.createAdmin(req.body);
         return res.status(HTTP_STATUS.CREATED).json(admin);
