@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-//import cors from 'cors';
+import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
 import {default as connect} from './utils/database';
@@ -29,7 +29,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use('/', router);
 
 connect();
