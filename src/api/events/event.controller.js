@@ -9,7 +9,12 @@ import logger from "../../utils/logger";
  * @returns {Promise<*>}
  */
 const createEvent = async (req, res) => {
-    logger.info('event.controller.js createEvent(): ' + JSON.parse(req.body));
+    //logger.info('event.controller.js createEvent(): ' + JSON.parse(req.body));
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+            error: "Unauthorized"
+        });
+    }
     try {
         const event = await EventService.createEvent(req.body);
         return res.status(HTTP_STATUS.CREATED).json(event);

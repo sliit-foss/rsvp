@@ -29,7 +29,7 @@ const adminLogin = async (req, res, next) => {
         }
         return res.status(HTTP_STATUS.OK).json({
             message: 'Authentication successful'
-        });
+        }).cookie("isAuthenticated", req.isAuthenticated());
     })(req, res, next);
 };
 
