@@ -17,7 +17,6 @@ const adminRegister = async (req, res) => {
 
 const adminLogin = async (req, res, next) => {
     passport.authenticate("local", function (err, user, info) {
-        console.log(info);
         if (err) {
             return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 error: err.message
@@ -28,7 +27,9 @@ const adminLogin = async (req, res, next) => {
                 message: 'Invalid username or password'
             });
         }
-        res.end('Authenticated');
+        return res.status(HTTP_STATUS.OK).json({
+            message: 'Authentication successful'
+        });
     })(req, res, next);
 };
 

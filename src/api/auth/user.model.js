@@ -7,11 +7,12 @@ import passportLocalMongoose from "passport-local-mongoose";
  */
 const userSchema = new Schema(
     {
-        username: String,
-        email: String,
-        password: String
+        username: {type: String, required: true, unique: true},
+        email: {type: String, required: true, unique: true},
+        password: {type: String, required: true}
     }
 );
 
 userSchema.plugin(passportLocalMongoose);
 export default model('User', userSchema);
+
