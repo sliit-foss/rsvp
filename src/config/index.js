@@ -11,6 +11,7 @@ export const PORT = process.env.PORT || 4000;
 export const NODE_ENV = process.env.NODE_ENV || 'development';
 export const VERSION = process.env.VERSION || '0.1.0';
 export const SESSION_SECRET = process.env.SECRET || 'index.js:284@7';
+export const PRIV_KEY = process.env.PRIV_KEY || 'fullterDc@';
 
 /**
  * @constant DB_CONNECTION_STRING database connection string

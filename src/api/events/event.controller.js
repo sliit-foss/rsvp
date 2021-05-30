@@ -9,12 +9,7 @@ import logger from "../../utils/logger";
  * @returns {Promise<*>}
  */
 const createEvent = async (req, res) => {
-    //logger.info('event.controller.js createEvent(): ' + JSON.parse(req.body));
-    if (!req.isAuthenticated || !req.isAuthenticated()) {
-        return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-            error: "Unauthorized"
-        });
-    }
+    logger.info('event.controller.js createEvent(): ' + JSON.stringify(req.body));
     try {
         const event = await EventService.createEvent(req.body);
         return res.status(HTTP_STATUS.CREATED).json(event);
@@ -53,15 +48,15 @@ const getEventById = async (req, res) => {
  */
 const getAllEvents = async (req, res) => {
     logger.info('event.controller.js getAllEvents()');
-   try {
+    try {
         const events = await EventService.getAllEvents(req.query.perpage, req.query.page);
         return res.status(HTTP_STATUS.OK).json(events);
-   } catch (err) {
-       logger.error('event.controller.js getAllEvents(): ' + err.message);
-       return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-           error: err.message
-       });
-   }
+    } catch (err) {
+        logger.error('event.controller.js getAllEvents(): ' + err.message);
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            error: err.message
+        });
+    }
 };
 
 export default {

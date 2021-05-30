@@ -16,7 +16,7 @@ const adminRegister = async (req, res) => {
 };
 
 const adminLogin = async (req, res, next) => {
-    passport.authenticate("local", function (err, user, info) {
+    passport.authenticate("local", function (err, user) {
         if (err) {
             return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 error: err.message
@@ -27,13 +27,16 @@ const adminLogin = async (req, res, next) => {
                 message: 'Invalid username or password'
             });
         }
+        const tokenObject = AuthService.issueJWT(user);
         return res.status(HTTP_STATUS.OK).json({
-            message: 'Authentication successful'
-        }).cookie("isAuthenticated", req.isAuthenticated());
+            message: 'Authentication successful',
+            token: tokenObject.token,
+            expiresIn: tokenObject.expires
+        });
     })(req, res, next);
 };
 
-const adminLogout = async (req, res) => {
+const adminLogout = async (req) => {
     req.logout();
 };
 
