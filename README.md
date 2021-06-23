@@ -1,5 +1,7 @@
 # SLIIT FOSS RSVP
 
+[Postman API Documentation](https://documenter.getpostman.com/view/16352758/Tzeak76G)
+
 ## Contribution Guide
 1. Fork the repository
 
