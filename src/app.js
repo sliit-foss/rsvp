@@ -9,8 +9,9 @@ import {SESSION_SECRET} from "./config";
 import User from "./api/auth/user.model";
 import LocalStrategy from "passport-local";
 import morgan from "morgan";
-import MemoryStore from "memorystore";
+import createMemoryStore from "memorystore";
 
+const MemoryStore = createMemoryStore(session);
 const app = express();
 
 app.use(express.json({extended: false}));
