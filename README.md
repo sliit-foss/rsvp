@@ -35,3 +35,9 @@ _See the guide for more details [Link](https://docs.github.com/en/free-pro-team@
 1. Use [semantic comments](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716)
 2. Write documentation ([jsdocs](https://jsdoc.app/))
 3. Write unit and integration tests for everything you write.
+
+# Contributors 
+
+<a href="https://github.com/sliit-foss/rsvp/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=sliit-foss/rsvp" />
+</a>
