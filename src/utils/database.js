@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { DB_CONNECTION_STRING, DB_HOST } from "../config";
-import logger from "../utils/logger";
+import mongoose from 'mongoose';
+import { DB_CONNECTION_STRING, DB_HOST } from '../config';
+import logger from '../utils/logger';
 
 /**
  * Connect to database
@@ -12,7 +12,7 @@ const connect = () =>
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
-    .then(() => logger.info("Connected to database on " + DB_HOST + "."))
+    .then(() => logger.info('Connected to database on ' + DB_HOST + '.'))
     .catch((err) => {
       logger.error(err.message);
       process.exit(0);

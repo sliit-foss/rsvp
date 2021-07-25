@@ -1,5 +1,5 @@
-import Event from "./event.model";
-import ImageUpload from "../../middleware/ImageUpload";
+import Event from './event.model';
+import ImageUpload from '../../middleware/ImageUpload';
 
 /**
  * Create event in db

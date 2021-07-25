@@ -1,8 +1,8 @@
-import User from "./user.model";
-import jsonwebtoken from "jsonwebtoken";
-import {PRIV_KEY} from "../../config";
-import {ExtractJwt, Strategy} from "passport-jwt";
-import passport from "passport";
+import User from './user.model';
+import jsonwebtoken from 'jsonwebtoken';
+import { PRIV_KEY } from '../../config';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import passport from 'passport';
 
 /**
  * Create admin in db
@@ -12,13 +12,13 @@ import passport from "passport";
  * @returns {Promise<Document<any>>}
  */
 
-const createAdmin = ({username, email, password}) => {
-    const user = new User({
-        username,
-        email
-    });
+const createAdmin = ({ username, email, password }) => {
+  const user = new User({
+    username,
+    email,
+  });
 
-    return User.register(user, password);
+  return User.register(user, password);
 };
 
 /**
@@ -27,20 +27,22 @@ const createAdmin = ({username, email, password}) => {
  * @returns {Promise<Document<any>>}
  */
 const issueJWT = (user) => {
-    const _id = user._id;
-    const expiresIn = '1d';
+  const _id = user._id;
+  const expiresIn = '1d';
 
-    const payload = {
-        sub: _id,
-        iat: Date.now()
-    };
+  const payload = {
+    sub: _id,
+    iat: Date.now(),
+  };
 
-    const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, {expiresIn: expiresIn});
+  const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, {
+    expiresIn: expiresIn,
+  });
 
-    return {
-        token: "Bearer " + signedToken,
-        expires: expiresIn
-    };
+  return {
+    token: 'Bearer ' + signedToken,
+    expires: expiresIn,
+  };
 };
 
 /**
@@ -49,24 +51,26 @@ const issueJWT = (user) => {
  */
 
 const options = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: PRIV_KEY
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: PRIV_KEY,
 };
 
-passport.use(new Strategy(options, function (jwt_payload, done) {
-    User.findOne({_id: jwt_payload.sub}, function (err, user) {
-        if (err) {
-            return done(err, false);
-        }
-        if (user) {
-            return done(null, user);
-        } else {
-            return done(null, false);
-        }
+passport.use(
+  new Strategy(options, function (jwt_payload, done) {
+    User.findOne({ _id: jwt_payload.sub }, function (err, user) {
+      if (err) {
+        return done(err, false);
+      }
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
     });
-}));
+  })
+);
 
 export default {
-    createAdmin,
-    issueJWT
+  createAdmin,
+  issueJWT,
 };

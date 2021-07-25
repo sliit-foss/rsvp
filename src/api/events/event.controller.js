@@ -1,6 +1,6 @@
 import EventService from './event.service';
-import {HTTP_STATUS} from "../../utils/http";
-import logger from "../../utils/logger";
+import { HTTP_STATUS } from '../../utils/http';
+import logger from '../../utils/logger';
 
 /**
  *
@@ -9,16 +9,16 @@ import logger from "../../utils/logger";
  * @returns {Promise<*>}
  */
 const createEvent = async (req, res) => {
-    logger.info('event.controller.js createEvent()');
-    try {
-        const event = await EventService.createEvent(req.body,req.user.id);
-        return res.status(HTTP_STATUS.CREATED).json(event);
-    } catch (err) {
-        logger.error('event.controller.js createEvent(): ' + err.message);
-        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-            error: err.message
-        });
-    }
+  logger.info('event.controller.js createEvent()');
+  try {
+    const event = await EventService.createEvent(req.body, req.user.id);
+    return res.status(HTTP_STATUS.CREATED).json(event);
+  } catch (err) {
+    logger.error('event.controller.js createEvent(): ' + err.message);
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      error: err.message,
+    });
+  }
 };
 
 /**
@@ -28,16 +28,16 @@ const createEvent = async (req, res) => {
  * @returns {Promise<*>}
  */
 const getEventById = async (req, res) => {
-    logger.info('event.controller.js getEventById(): id: ' + req.params.id);
-    try {
-        const event = await EventService.getEventById(req.params.id);
-        return res.status(HTTP_STATUS.OK).json(event);
-    } catch (err) {
-        logger.error('event.controller.js getEventById(): ' + err.message);
-        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-            error: err.message
-        });
-    }
+  logger.info('event.controller.js getEventById(): id: ' + req.params.id);
+  try {
+    const event = await EventService.getEventById(req.params.id);
+    return res.status(HTTP_STATUS.OK).json(event);
+  } catch (err) {
+    logger.error('event.controller.js getEventById(): ' + err.message);
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      error: err.message,
+    });
+  }
 };
 
 /**
@@ -47,20 +47,23 @@ const getEventById = async (req, res) => {
  * @returns {Promise<void>}
  */
 const getAllEvents = async (req, res) => {
-    logger.info('event.controller.js getAllEvents()');
-    try {
-        const events = await EventService.getAllEvents(req.query.perpage, req.query.page);
-        return res.status(HTTP_STATUS.OK).json(events);
-    } catch (err) {
-        logger.error('event.controller.js getAllEvents(): ' + err.message);
-        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-            error: err.message
-        });
-    }
+  logger.info('event.controller.js getAllEvents()');
+  try {
+    const events = await EventService.getAllEvents(
+      req.query.perpage,
+      req.query.page
+    );
+    return res.status(HTTP_STATUS.OK).json(events);
+  } catch (err) {
+    logger.error('event.controller.js getAllEvents(): ' + err.message);
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      error: err.message,
+    });
+  }
 };
 
 export default {
-    createEvent,
-    getEventById,
-    getAllEvents
+  createEvent,
+  getEventById,
+  getAllEvents,
 };
