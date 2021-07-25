@@ -29,7 +29,7 @@ const eventSchema = new Schema(
     status: { type: String, required: true },
     category: { type: String, required: true },
     speakers: [{ type: speakerSchema }],
-    createdBy: { type: String }, // TODO: change to object id, ref: user
+    createdBy: { type: String },
     host: { type: String }, // TODO: change to object id, ref: host
   },
   { timestamps: true }
