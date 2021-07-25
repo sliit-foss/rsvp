@@ -1,9 +1,9 @@
 import express from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import {default as connect} from "./utils/database";
+import {default as initialize} from "./utils/firebase";
 import router from "./api/routes";
 import {SESSION_SECRET} from "./config";
 import User from "./api/auth/user.model";
@@ -14,9 +14,8 @@ import createMemoryStore from "memorystore";
 const MemoryStore = createMemoryStore(session);
 const app = express();
 
-app.use(express.json({extended: false}));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
+app.use(express.json({limit: '10mb'}));
+app.use(express.urlencoded({limit: '10mb', extended: false}));
 
 //ENABLING SESSION
 app.set("trust proxy", 1); // trust first proxy
@@ -43,5 +42,6 @@ app.use("/", router);
 app.use(morgan("dev"));
 
 connect();
+initialize();
 
 export default app;

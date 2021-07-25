@@ -9,9 +9,9 @@ import logger from "../../utils/logger";
  * @returns {Promise<*>}
  */
 const createEvent = async (req, res) => {
-    logger.info('event.controller.js createEvent(): ' + JSON.stringify(req.body));
+    logger.info('event.controller.js createEvent()');
     try {
-        const event = await EventService.createEvent(req.body);
+        const event = await EventService.createEvent(req.body,req.user.id);
         return res.status(HTTP_STATUS.CREATED).json(event);
     } catch (err) {
         logger.error('event.controller.js createEvent(): ' + err.message);
