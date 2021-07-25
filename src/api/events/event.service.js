@@ -8,9 +8,11 @@ import ImageUpload from '../../middleware/ImageUpload';
  * @param headerImage
  * @param photos
  * @param venue
- * @param fromDate
- * @param toDate
+ * @param date
+ * @param fromTime
+ * @param toTime
  * @param status
+ * @param category
  * @param speakers
  * @param createdBy
  * @param host
@@ -92,8 +94,29 @@ const getAllEvents = (perpage, page) =>
     .limit(parseInt(perpage))
     .skip((parseInt(page) - 1) * parseInt(page));
 
+/**
+ *
+ * @param id
+ * @param body
+ * @returns {Query<Document | null, Document>}
+ */
+const updateEventByID = (id, body) =>
+  Event.findByIdAndUpdate(id, body, {
+    new: true,
+    runValidators: false,
+  });
+
+/**
+ *
+ * @param id
+ * @returns {Query<Document | null, Document>}
+ */
+const deleteEventById = (id) => Event.findByIdAndDelete(id);
+
 export default {
   createEvent,
   getEventById,
   getAllEvents,
+  updateEventByID,
+  deleteEventById,
 };
