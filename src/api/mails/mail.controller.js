@@ -1,7 +1,7 @@
-import { HTTP_STATUS } from "../../utils/http";
-import logger from "../../utils/logger";
-import nodemailer from "nodemailer";
-import ClientConst from "./mail.constants";
+import { HTTP_STATUS } from '../../utils/http';
+import logger from '../../utils/logger';
+import nodemailer from 'nodemailer';
+import ClientConst from './mail.constants';
 
 /**
  *
@@ -30,24 +30,24 @@ const sendMail = async (req, res, next) => {
     html: req.body.html,
   };
 
-  logger.info("mail.controller.js sendMail(): " + req.body);
+  logger.info('mail.controller.js sendMail(): ' + req.body);
 
   try {
     transport.sendMail(mailOptions, (error, info) => {
       if (error) {
-        logger.error("mail.controller.js ExecuteMail(): " + error.message);
+        logger.error('mail.controller.js ExecuteMail(): ' + error.message);
         return res
           .status(HTTP_STATUS.OK)
-          .json({ success: false, messageid: "", error: error.message });
+          .json({ success: false, messageid: '', error: error.message });
       } else {
-        logger.info("Message sent: ", info.messageId);
+        logger.info('Message sent: ', info.messageId);
         return res
           .status(HTTP_STATUS.OK)
-          .json({ success: true, messageid: info.messageId, error: "" });
+          .json({ success: true, messageid: info.messageId, error: '' });
       }
     });
   } catch (err) {
-    logger.error("mail.controller.js sendMail(): " + err.message);
+    logger.error('mail.controller.js sendMail(): ' + err.message);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: err.message,
     });
@@ -60,16 +60,16 @@ const checkAvailability = async (req, res, next) => {
       if (error) {
         return res
           .status(HTTP_STATUS.OK)
-          .json({ available: false, message: "Server is not ready" });
+          .json({ available: false, message: 'Server is not ready' });
       } else {
         return res.status(HTTP_STATUS.OK).json({
           available: true,
-          message: "Server is ready to take our messages",
+          message: 'Server is ready to take our messages',
         });
       }
     });
   } catch (error) {
-    logger.error("mail.controller.js checkAvailability(): " + error.message);
+    logger.error('mail.controller.js checkAvailability(): ' + error.message);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: err.message,
     });

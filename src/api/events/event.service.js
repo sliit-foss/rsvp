@@ -1,4 +1,5 @@
 import Event from './event.model';
+import ImageUpload from '../../middleware/ImageUpload';
 
 /**
  * Create event in db
@@ -15,18 +16,62 @@ import Event from './event.model';
  * @param host
  * @returns {Promise<Document<any>>}
  */
-const createEvent = ({
-                         name, description, headerImage,
-                         photos, venue, fromDate, toDate,
-                         status, speakers, createdBy, host
-                     }) => {
-    const event = new Event({
-        name, description, headerImage,
-        photos, venue, fromDate, toDate,
-        status, speakers, createdBy, host
-    });
+const createEvent = async (
+  {
+    name,
+    description,
+    headerImage,
+    photos,
+    venue,
+    date,
+    fromTime,
+    toTime,
+    status,
+    category,
+    speakers,
+    host,
+  },
+  createdBy
+) => {
+  headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
 
-    return event.save();
+  photos = await Promise.all(
+    photos.map(async function (photo, index) {
+      await ImageUpload(photo, `${name}/photo` + index.toString()).then(
+        (imageURL) => (photo = imageURL)
+      );
+      return photo;
+    })
+  );
+
+  speakers = await Promise.all(
+    speakers.map(async function (speaker, index) {
+      await ImageUpload(
+        speaker.photo,
+        `${name}/speaker` + index.toString()
+      ).then((imageURL) => (speaker.photo = imageURL));
+      return speaker;
+    })
+  );
+
+  const event = new Event({
+    name,
+    description,
+    headerImage,
+    photos,
+    venue,
+    date,
+    fromTime,
+    toTime,
+    status,
+    category,
+    speakers,
+    createdBy,
+    host,
+    createdBy,
+  });
+
+  return event.save();
 };
 
 /**
@@ -34,7 +79,7 @@ const createEvent = ({
  * @param id
  * @returns {Query<Document | null, Document>}
  */
-const getEventById = id => Event.findById(id);
+const getEventById = (id) => Event.findById(id);
 
 /**
  *
@@ -43,13 +88,12 @@ const getEventById = id => Event.findById(id);
  * @returns {Query<Array<Document>, Document>}
  */
 const getAllEvents = (perpage, page) =>
-    Event
-        .find()
-        .limit(parseInt(perpage))
-        .skip((parseInt(page) - 1) * parseInt(page));
+  Event.find()
+    .limit(parseInt(perpage))
+    .skip((parseInt(page) - 1) * parseInt(page));
 
 export default {
-    createEvent,
-    getEventById,
-    getAllEvents
+  createEvent,
+  getEventById,
+  getAllEvents,
 };

@@ -1,6 +1,6 @@
 import AttendeeService from './attendee.service';
 import { HTTP_STATUS } from '../../utils/http';
-import logger from "../../utils/logger";
+import logger from '../../utils/logger';
 
 /**
  *
@@ -10,7 +10,9 @@ import logger from "../../utils/logger";
  */
 
 const createAttendee = async (req, res) => {
-  logger.info('attendee.controller.js createAttendee(): ' + JSON.parse(req.body));
+  logger.info(
+    'attendee.controller.js createAttendee(): ' + JSON.parse(req.body)
+  );
   try {
     const attendee = await AttendeeService.createAttendee(req.body);
     return res.status(HTTP_STATUS.CREATED).json(attendee);
@@ -32,9 +34,7 @@ const createAttendee = async (req, res) => {
 const getAttendeeById = async (req, res) => {
   logger.info('attendee.controller.js getAttendeeById(): id: ' + req.params.id);
   try {
-    const attendee = await AttendeeService.getAttendeeById(
-      req.params.id
-    );
+    const attendee = await AttendeeService.getAttendeeById(req.params.id);
     return res.status(HTTP_STATUS.OK).json(attendee);
   } catch (err) {
     logger.error('attendee.controller.js getAttendeeById(): ' + err.message);
@@ -54,7 +54,10 @@ const getAttendeeById = async (req, res) => {
 const getAllAttendees = async (req, res) => {
   logger.info('attendee.controller.js getAllAttendees()');
   try {
-    const attendees = await AttendeeService.getAllAttendees(req.query.perpage, req.query.page);
+    const attendees = await AttendeeService.getAllAttendees(
+      req.query.perpage,
+      req.query.page
+    );
     return res.status(HTTP_STATUS.OK).json(attendees);
   } catch (err) {
     logger.error('attendee.controller.js getAllAttendee(): ' + err.message);

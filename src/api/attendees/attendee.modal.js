@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 /**
  *
@@ -15,4 +15,4 @@ const attendeeSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("Attendees", attendeeSchema);
+export default model('Attendees', attendeeSchema);
