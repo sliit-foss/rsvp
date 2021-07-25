@@ -35,21 +35,24 @@ const createEvent = async (
 ) => {
   headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
 
-  for (let i = 0; i < photos.length; i++) {
-    const imageURL = await ImageUpload(
-      photos[i],
-      `${name}/photo` + i.toString()
-    );
-    photos[i] = imageURL;
-  }
+  photos = await Promise.all(
+    photos.map(async function (photo, index) {
+      await ImageUpload(photo, `${name}/photo` + index.toString()).then(
+        (imageURL) => (photo = imageURL)
+      );
+      return photo;
+    })
+  );
 
-  for (let j = 0; j < speakers.length; j++) {
-    const imageURL = await ImageUpload(
-      speakers[j].photo,
-      `${name}/speaker` + j.toString()
-    );
-    speakers[j].photo = imageURL;
-  }
+  speakers = await Promise.all(
+    speakers.map(async function (speaker, index) {
+      await ImageUpload(
+        speaker.photo,
+        `${name}/speaker` + index.toString()
+      ).then((imageURL) => (speaker.photo = imageURL));
+      return speaker;
+    })
+  );
 
   const event = new Event({
     name,
