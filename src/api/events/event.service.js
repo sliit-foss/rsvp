@@ -35,13 +35,12 @@ const createEvent = async (
   },
   createdBy
 ) => {
-
   if (isNaN(Date.parse(date))) {
     throw {
       message: 'invalid date format. please use yyyy-mm-dd or mm-dd-yyyy',
     };
   }
-  
+
   headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
 
   photos = await Promise.all(
@@ -104,6 +103,14 @@ const getAllEvents = (perpage, page) =>
 
 /**
  *
+ * @returns {Query<Document | null, Document>}
+ */
+const getLatestEvent = () => {
+  return Event.findOne().sort({ date: -1 });
+};
+
+/**
+ *
  * @param id
  * @param body
  * @returns {Query<Document | null, Document>}
@@ -125,6 +132,7 @@ export default {
   createEvent,
   getEventById,
   getAllEvents,
+  getLatestEvent,
   updateEventByID,
   deleteEventById,
 };
