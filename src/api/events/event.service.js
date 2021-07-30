@@ -1,5 +1,6 @@
 import Event from './event.model';
 import ImageUpload from '../../middleware/ImageUpload';
+import ImageDelete from '../../middleware/ImageDelete';
 
 /**
  * Create event in db
@@ -126,7 +127,23 @@ const updateEventByID = (id, body) =>
  * @param id
  * @returns {Query<Document | null, Document>}
  */
-const deleteEventById = (id) => Event.findByIdAndDelete(id);
+const deleteEventById = async (id) =>
+  Event.findById(id, async function (err, event) {
+    if (!err) {
+      await ImageDelete(event.headerImage);
+
+      event.photos.map(async function (photo) {
+        await ImageDelete(photo);
+      });
+
+      event.speakers.map(async function (speaker) {
+        await ImageDelete(speaker.photo);
+      });
+    } else {
+      console.log(err);
+    }
+    event.remove();
+  });
 
 export default {
   createEvent,
