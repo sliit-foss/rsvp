@@ -1,6 +1,5 @@
 import Event from './event.model';
-import ImageUpload from '../../middleware/ImageUpload';
-import ImageDelete from '../../middleware/ImageDelete';
+import {ImageUpload,ImageDelete} from '../../middleware/FirebaseStorage';
 
 /**
  * Create event in db
