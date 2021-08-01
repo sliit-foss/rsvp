@@ -1,14 +1,25 @@
 /**
  * The status an event can be in
- * @type {{CANCELLED: string, CLOSED: string, POSTPONED: string, OPEN: string}}
+ * @type {{HAPPENING: string, UPCOMING: string, CLOSED: string, CANCELLED: string, POSTPONED: string}}
  */
 const EVENT_STATUS = {
-  OPEN: 'open',
-  CLOSED: 'closed',
-  CANCELLED: 'cancelled',
-  POSTPONED: 'postponed',
+  HAPPENING: 'Happening Now',
+  UPCOMING: 'Upcoming',
+  CLOSED: 'Closed',
+  CANCELLED: 'Cancelled',
+  POSTPONED: 'Postponed',
 };
 
-export default {
-  EVENT_STATUS,
+const getEventStatus = (startTime, endTime) => {
+  const currentTime = Date.now();
+
+  if (currentTime < startTime) {
+    return 'Upcoming';
+  } else if (currentTime > startTime && currentTime < endTime) {
+    return 'Happening Now';
+  } else {
+    return 'Closed';
+  }
 };
+
+export { EVENT_STATUS, getEventStatus };

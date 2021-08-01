@@ -1,5 +1,6 @@
 import Event from './event.model';
-import {ImageUpload,ImageDelete} from '../../middleware/FirebaseStorage';
+import { EVENT_STATUS, getEventStatus } from './event.constants';
+import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
 
 /**
  * Create event in db
@@ -8,12 +9,12 @@ import {ImageUpload,ImageDelete} from '../../middleware/FirebaseStorage';
  * @param headerImage
  * @param photos
  * @param venue
- * @param date
- * @param fromTime
- * @param toTime
+ * @param startTime
+ * @param endTime
  * @param status
  * @param category
  * @param speakers
+ * @param tags
  * @param createdBy
  * @param host
  * @returns {Promise<Document<any>>}
@@ -25,22 +26,16 @@ const createEvent = async (
     headerImage,
     photos,
     venue,
-    date,
-    fromTime,
-    toTime,
+    startTime,
+    endTime,
     status,
     category,
     speakers,
+    tags,
     host,
   },
   createdBy
 ) => {
-  if (isNaN(Date.parse(date))) {
-    throw {
-      message: 'invalid date format. please use yyyy-mm-dd or mm-dd-yyyy',
-    };
-  }
-
   headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
 
   photos = await Promise.all(
@@ -68,12 +63,12 @@ const createEvent = async (
     headerImage,
     photos,
     venue,
-    date,
-    fromTime,
-    toTime,
+    startTime,
+    endTime,
     status,
     category,
     speakers,
+    tags,
     createdBy,
     host,
     createdBy,
@@ -95,18 +90,37 @@ const getEventById = (id) => Event.findById(id);
  * @param page
  * @returns {Query<Array<Document>, Document>}
  */
-const getAllEvents = (perpage, page) =>
-  Event.find()
-    .sort({ date: -1 })
+const getAllEvents = async (perpage, page) => {
+  let eventList;
+  await Event.find(async function (err, events) {
+    if (!err) {
+      events.map(async function (event) {
+        if (
+          event.status !== EVENT_STATUS.CANCELLED &&
+          event.status !== EVENT_STATUS.POSTPONED &&
+          event.status !== EVENT_STATUS.CLOSED
+        ) {
+          event.status = getEventStatus(event.startTime, event.endTime);
+        }
+        event.speakers = undefined;
+        event.photos = undefined;
+      });
+    }
+    eventList = events;
+  })
+    .sort({ startTime: -1 })
     .limit(parseInt(perpage))
     .skip((parseInt(page) - 1) * parseInt(page));
+
+  return eventList;
+};
 
 /**
  *
  * @returns {Query<Document | null, Document>}
  */
 const getLatestEvent = () => {
-  return Event.findOne().sort({ date: -1 });
+  return Event.findOne().sort({ startTime: -1 });
 };
 
 /**

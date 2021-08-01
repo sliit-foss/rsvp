@@ -10,8 +10,7 @@ export const ImageUpload = async (base64Img, filePath) => {
   const imageBuffer = new Buffer.from(base64EncodedImageString, 'base64');
   const uuid = v4();
 
-  const downloadURL =
-    `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(`images/${filePath}`)}?alt=media&token=${uuid}`
+  const downloadURL = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(`images/${filePath}`)}?alt=media&token=${uuid}`;
 
   await file.save(imageBuffer, {
     metadata: {
@@ -25,15 +24,14 @@ export const ImageUpload = async (base64Img, filePath) => {
   return downloadURL;
 };
 
-
 export const ImageDelete = async (imageURL) => {
-  const pathArray = imageURL
-    .replaceAll('%20', ' ')
-    .replaceAll('%2F', '/')
-    .split('?')[0]
-    .split('/')
-    .reverse();
-  const imagePath = `${pathArray[2]}/${pathArray[1]}/${pathArray[0]}`;
-  await admin.storage().bucket().file(imagePath).delete();
+  if (imageURL) {
+    const pathArray = decodeURIComponent(imageURL)
+      .split('?')[0]
+      .split('/')
+      .reverse();
+    const imagePath = `${pathArray[2]}/${pathArray[1]}/${pathArray[0]}`;
+    console.log(imagePath)
+    await admin.storage().bucket().file(imagePath).delete();
+  }
 };
-
