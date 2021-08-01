@@ -109,7 +109,7 @@ const getAllEvents = async (perpage, page) => {
     .sort({ startTime: -1 })
     .limit(parseInt(perpage))
     .skip((parseInt(page) - 1) * parseInt(page))
-    .select(['speakers', 'photos', 'tags']);
+    .select(['-speakers', '-photos', '-tags']);
 };
 
 /**
