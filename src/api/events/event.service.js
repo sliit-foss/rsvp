@@ -91,7 +91,6 @@ const getEventById = (id) => Event.findById(id);
  * @returns {Query<Array<Document>, Document>}
  */
 const getAllEvents = async (perpage, page) => {
-  let eventList;
   await Event.find(async function (err, events) {
     if (!err) {
       events.map(async function (event) {
@@ -101,18 +100,16 @@ const getAllEvents = async (perpage, page) => {
           event.status !== EVENT_STATUS.CLOSED
         ) {
           event.status = getEventStatus(event.startTime, event.endTime);
+          event.save();
         }
-        event.speakers = undefined;
-        event.photos = undefined;
       });
     }
-    eventList = events;
-  })
+  });
+  return await Event.find()
     .sort({ startTime: -1 })
     .limit(parseInt(perpage))
-    .skip((parseInt(page) - 1) * parseInt(page));
-
-  return eventList;
+    .skip((parseInt(page) - 1) * parseInt(page))
+    .select(['speakers', 'photos', 'tags']);
 };
 
 /**
