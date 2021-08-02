@@ -1,5 +1,10 @@
 import Event from './event.model';
-import { EVENT_STATUS, getEventStatus } from './event.constants';
+import {
+  EVENT_STATUS,
+  getEventStatus,
+  uploadEventPhotos,
+  uploadSpeakerPhotos,
+} from './event.constants';
 import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
 
 /**
@@ -37,25 +42,8 @@ const createEvent = async (
   createdBy
 ) => {
   headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
-
-  photos = await Promise.all(
-    photos.map(async function (photo, index) {
-      await ImageUpload(photo, `${name}/photo` + index.toString()).then(
-        (imageURL) => (photo = imageURL)
-      );
-      return photo;
-    })
-  );
-
-  speakers = await Promise.all(
-    speakers.map(async function (speaker, index) {
-      await ImageUpload(
-        speaker.photo,
-        `${name}/speaker` + index.toString()
-      ).then((imageURL) => (speaker.photo = imageURL));
-      return speaker;
-    })
-  );
+  photos = await uploadEventPhotos(photos, name);
+  speakers = await uploadSpeakerPhotos(speakers, name);
 
   const event = new Event({
     name,
@@ -126,11 +114,31 @@ const getLatestEvent = () => {
  * @param body
  * @returns {Query<Document | null, Document>}
  */
-const updateEventByID = (id, body) =>
-  Event.findByIdAndUpdate(id, body, {
+const updateEventByID = async (id, body) => {
+  const eventName = body.name
+    ? body.name
+    : (await Event.findById(id).select(['name'])).name;
+
+  if (body.headerImage) {
+    body.headerImage = await ImageUpload(
+      body.headerImage,
+      `${eventName}/headerImage`
+    );
+  }
+
+  if (body.photos) {
+    body.photos = await uploadEventPhotos(body.photos, eventName);
+  }
+
+  if (body.speakers) {
+    body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
+  }
+
+  return await Event.findByIdAndUpdate(id, body, {
     new: true,
     runValidators: false,
   });
+};
 
 /**
  *
