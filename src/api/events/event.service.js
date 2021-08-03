@@ -19,6 +19,7 @@ import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
  * @param status
  * @param category
  * @param speakers
+ * @param capacity
  * @param tags
  * @param createdBy
  * @param host
@@ -36,6 +37,7 @@ const createEvent = async (
     status,
     category,
     speakers,
+    capacity,
     tags,
     host,
   },
@@ -56,6 +58,7 @@ const createEvent = async (
     status,
     category,
     speakers,
+    capacity,
     tags,
     createdBy,
     host,
@@ -163,6 +166,44 @@ const deleteEventById = async (id) =>
     event.remove();
   });
 
+/**
+ *
+ * @param id
+ * @param body
+ * @returns {Query<Document | null, Document>}
+ */
+const registerAttendee = async (id, body) => {
+  const event = await Event.findById(id);
+  const attendees = event.attendees || [];
+  
+  if(event.status!=="Upcoming"){
+    throw { message: 'Registrations closed for this event' };
+  }
+
+  if(event.capacity===attendees.length){
+    throw { message: 'Event capacity reached' };
+  }
+
+  const emailChecklist = attendees.filter((attendee) => {
+    return attendee.email == body.email;
+  });
+
+  if (emailChecklist.length) {
+    throw { message: 'Email has already been registered' };
+  }
+
+  attendees.push(body);
+
+  body = {
+    attendees: attendees,
+  };
+
+  return await Event.findByIdAndUpdate(id, body, {
+    new: true,
+    runValidators: false,
+  });
+};
+
 export default {
   createEvent,
   getEventById,
@@ -170,4 +211,5 @@ export default {
   getLatestEvent,
   updateEventByID,
   deleteEventById,
+  registerAttendee,
 };

@@ -16,6 +16,12 @@ const speakerSchema = new Schema({
   linkedInURL: { type: String, required: true },
 });
 
+const attendeeSchema = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  organization: { type: String, required: true },
+});
+
 const eventSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -25,9 +31,11 @@ const eventSchema = new Schema(
     venue: { type: String, required: true },
     startTime: { type: Number, required: true },
     endTime: { type: Number, required: true },
-    status: { type: String},
+    status: { type: String },
     category: { type: String, required: true },
-    speakers: [{ type: speakerSchema }],
+    speakers: { type: [speakerSchema] },
+    attendees: { type: [attendeeSchema]},
+    capacity: { type: Number, required: true },
     tags: { type: [String] },
     createdBy: { type: String },
     host: { type: String }, // TODO: change to object id, ref: host
