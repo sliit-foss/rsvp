@@ -100,7 +100,7 @@ const getAllEvents = async (perpage, page) => {
     .sort({ startTime: -1 })
     .limit(parseInt(perpage))
     .skip((parseInt(page) - 1) * parseInt(page))
-    .select(['-speakers', '-photos', '-tags']);
+    .select(['-speakers', '-photos', '-tags', '-attendees']);
 };
 
 /**
@@ -175,12 +175,12 @@ const deleteEventById = async (id) =>
 const registerAttendee = async (id, body) => {
   const event = await Event.findById(id);
   const attendees = event.attendees || [];
-  
-  if(event.status!=="Upcoming"){
+
+  if (event.status !== 'Upcoming') {
     throw { message: 'Registrations closed for this event' };
   }
 
-  if(event.capacity===attendees.length){
+  if (event.capacity === attendees.length) {
     throw { message: 'Event capacity reached' };
   }
 
