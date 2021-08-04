@@ -113,13 +113,19 @@ const getAllEvents = async (perpage, page) => {
 
 /**
  *
- * @returns {Query<Document | null, Document>}
+ * @returns {Query<Array<Document>, Document>}
  */
-const getLatestEvents = () => {
-  return Event.find()
+const getLatestEvents = async () => {
+  const results = await Event.find()
     .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
     .sort({ status: 1, startTime: 1 })
     .limit(3);
+
+  if (!results.length) {
+    return Event.findOne().sort({ startTime: -1 });
+  } else {
+    return results;
+  }
 };
 
 /**
