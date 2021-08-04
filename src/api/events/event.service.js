@@ -47,6 +47,14 @@ const createEvent = async (
   photos = await uploadEventPhotos(photos, name);
   speakers = await uploadSpeakerPhotos(speakers, name);
 
+  if (
+    status !== EVENT_STATUS.CANCELLED &&
+    status !== EVENT_STATUS.POSTPONED &&
+    status !== EVENT_STATUS.CLOSED
+  ) {
+    status = getEventStatus(startTime, endTime);
+  }
+
   const event = new Event({
     name,
     description,
@@ -107,8 +115,11 @@ const getAllEvents = async (perpage, page) => {
  *
  * @returns {Query<Document | null, Document>}
  */
-const getLatestEvent = () => {
-  return Event.findOne().sort({ startTime: -1 });
+const getLatestEvents = () => {
+  return Event.find()
+    .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
+    .sort({ status: 1, startTime: 1 })
+    .limit(3);
 };
 
 /**
@@ -208,7 +219,7 @@ export default {
   createEvent,
   getEventById,
   getAllEvents,
-  getLatestEvent,
+  getLatestEvents,
   updateEventByID,
   deleteEventById,
   registerAttendee,

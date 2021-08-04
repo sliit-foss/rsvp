@@ -68,11 +68,11 @@ const getAllEvents = async (req, res) => {
  * @param res
  * @returns {Promise<void>}
  */
-const getLatestEvent = async (req, res) => {
+const getLatestEvents = async (req, res) => {
   logger.info('event.controller.js getLatestEvent()');
   try {
-    const event = await EventService.getLatestEvent();
-    return res.status(HTTP_STATUS.OK).json(event);
+    const events = await EventService.getLatestEvents();
+    return res.status(HTTP_STATUS.OK).json(events);
   } catch (err) {
     logger.error('event.controller.js getLatestEvent(): ' + err.message);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
@@ -164,7 +164,7 @@ export default {
   createEvent,
   getEventById,
   getAllEvents,
-  getLatestEvent,
+  getLatestEvents,
   updateEventByID,
   deleteEventById,
   registerAttendee,

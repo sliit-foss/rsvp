@@ -5,7 +5,7 @@ import passport from 'passport';
 const router = Router();
 
 router.get('/', EventController.getAllEvents);
-router.get('/latest', EventController.getLatestEvent);
+router.get('/latest', EventController.getLatestEvents);
 router.get('/:id', EventController.getEventById);
 router.post(
   '/',
