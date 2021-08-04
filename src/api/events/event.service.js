@@ -122,7 +122,7 @@ const getLatestEvents = async () => {
     .limit(3);
 
   if (!results.length) {
-    return Event.findOne().sort({ startTime: -1 });
+    return [await Event.findOne().sort({ startTime: -1 })];
   } else {
     return results;
   }
