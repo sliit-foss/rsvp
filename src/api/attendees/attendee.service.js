@@ -1,40 +1,46 @@
-import Attendee from './attendee.modal';
-
-/**
- * Create event in db
- * @param firstName
- * @param lastName
- * @param email
- * @param contactNo
- * @param previlege
- * @returns {Promise<Document<any>>}
- */
-
-const createAttendee = ({
-  firstName,
-  lastName,
-  email,
-  contactNo,
-  previlege,
-}) => {
-  const attendee = new Attendee({
-    firstName,
-    lastName,
-    email,
-    contactNo,
-    previlege,
-  });
-
-  return attendee.save();
-};
+import Event from '../events/event.model';
 
 /**
  *
  * @param id
+ * @param body
  * @returns {Query<Document | null, Document>}
  */
+const attendEvent = async (id, body) => {
+  const event = await Event.findById(id);
+  if (!event) {
+    throw { message: `Event not found with id:${id}` };
+  }
+  const attendees = event.attendees || [];
 
-const getAttendeeById = (id) => Attendee.findById(id);
+  if (event.status !== 'Upcoming') {
+    throw { message: 'Registrations closed for this event' };
+  }
+
+  if (event.capacity === attendees.length) {
+    throw { message: 'Event capacity reached' };
+  }
+
+  const emailChecklist = attendees.filter((attendee) => {
+    return attendee.email == body.email;
+  });
+
+  if (emailChecklist.length) {
+    throw { message: 'Email has already been registered' };
+  }
+
+  attendees.push(body);
+
+  body = {
+    attendeeCount: (event.attendeeCount += 1),
+    attendees: attendees,
+  };
+
+  return await Event.findByIdAndUpdate(id, body, {
+    new: true,
+    runValidators: false,
+  });
+};
 
 /**
  *
@@ -42,14 +48,15 @@ const getAttendeeById = (id) => Attendee.findById(id);
  * @param page
  * @returns {Query<Array<Document>, Document>}
  */
-
-const getAllAttendees = (perpage, page) =>
-  Attendee.find()
-    .limit(parseInt(perpage))
-    .skip((parseInt(page) - 1) * parseInt(page));
+const getAttendees = async (id) => {
+  const results = await Event.findById(id).select(['attendees']);
+  if (!results) {
+    throw { message: `Event not found with id:${id}` };
+  }
+  return results.attendees;
+};
 
 export default {
-  createAttendee,
-  getAttendeeById,
-  getAllAttendees,
+  attendEvent,
+  getAttendees,
 };
