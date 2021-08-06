@@ -8,19 +8,23 @@ import logger from '../../utils/logger';
  * @param res
  * @returns {Promise<*>}
  */
-
-const createAttendee = async (req, res) => {
-  logger.info(
-    'attendee.controller.js createAttendee(): ' + JSON.parse(req.body)
-  );
+const attendEvent = async (req, res) => {
+  logger.info('attendee.controller.js attendEvent(): id: ' + req.params.id);
   try {
-    const attendee = await AttendeeService.createAttendee(req.body);
-    return res.status(HTTP_STATUS.CREATED).json(attendee);
+    const event = await AttendeeService.attendEvent(req.params.id, req.body);
+    if (!event) {
+      return res
+        .status(HTTP_STATUS.BAD_REQUEST)
+        .json({ error: `Event not found with id:${req.params.id}` });
+    }
+    return res.status(HTTP_STATUS.OK).json({
+      message: `Sucessfully registered to event with id:${req.params.id}`,
+    });
   } catch (err) {
-    logger.error('attendee.controller.js createAttendee(): ' + err.message);
-    return res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({ error: err.message });
+    logger.error('attendee.controller.js attendEvent(): ' + err.message);
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      error: err.message,
+    });
   }
 };
 
@@ -30,37 +34,13 @@ const createAttendee = async (req, res) => {
  * @param res
  * @returns {Promise<*>}
  */
-
-const getAttendeeById = async (req, res) => {
-  logger.info('attendee.controller.js getAttendeeById(): id: ' + req.params.id);
+const getAttendees = async (req, res) => {
+  logger.info('attendee.controller.js getAttendees(): id: ' + req.params.id);
   try {
-    const attendee = await AttendeeService.getAttendeeById(req.params.id);
-    return res.status(HTTP_STATUS.OK).json(attendee);
-  } catch (err) {
-    logger.error('attendee.controller.js getAttendeeById(): ' + err.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
-    });
-  }
-};
-
-/**
- *
- * @param req
- * @param res
- * @returns {Promise<void>}
- */
-
-const getAllAttendees = async (req, res) => {
-  logger.info('attendee.controller.js getAllAttendees()');
-  try {
-    const attendees = await AttendeeService.getAllAttendees(
-      req.query.perpage,
-      req.query.page
-    );
+    const attendees = await AttendeeService.getAttendees(req.params.id);
     return res.status(HTTP_STATUS.OK).json(attendees);
   } catch (err) {
-    logger.error('attendee.controller.js getAllAttendee(): ' + err.message);
+    logger.error('attendee.controller.js getAttendees(): ' + err.message);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       error: err.message,
     });
@@ -68,7 +48,6 @@ const getAllAttendees = async (req, res) => {
 };
 
 export default {
-  createAttendee,
-  getAllAttendees,
-  getAttendeeById,
+  attendEvent,
+  getAttendees,
 };

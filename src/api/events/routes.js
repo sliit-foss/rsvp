@@ -12,10 +12,6 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   EventController.createEvent
 );
-router.post(
-  '/register/:id',
-  EventController.registerAttendee
-);
 router.put(
   '/:id',
   passport.authenticate('jwt', { session: false }),

@@ -1,9 +1,14 @@
 import { Router } from 'express';
 import AttendeeController from './attendee.controller';
+import passport from 'passport';
+
 const router = new Router();
 
-router.get('/:id', AttendeeController.getAttendeeById);
-router.get('/', AttendeeController.getAllAttendees);
-router.post('/', AttendeeController.createAttendee);
+router.get(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  AttendeeController.getAttendees
+);
+router.post('/:id', AttendeeController.attendEvent);
 
 export default router;

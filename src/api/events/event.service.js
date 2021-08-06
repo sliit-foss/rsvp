@@ -81,7 +81,7 @@ const createEvent = async (
  * @param id
  * @returns {Query<Document | null, Document>}
  */
-const getEventById = (id) => Event.findById(id);
+const getEventById = (id) => Event.findById(id).select(['-attendees']);
 
 /**
  *
@@ -119,6 +119,7 @@ const getLatestEvents = async () => {
   const results = await Event.find()
     .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
     .sort({ status: 1, startTime: 1 })
+    .select(['-attendees'])
     .limit(3);
 
   if (!results.length) {
@@ -183,44 +184,6 @@ const deleteEventById = async (id) =>
     event.remove();
   });
 
-/**
- *
- * @param id
- * @param body
- * @returns {Query<Document | null, Document>}
- */
-const registerAttendee = async (id, body) => {
-  const event = await Event.findById(id);
-  const attendees = event.attendees || [];
-
-  if (event.status !== 'Upcoming') {
-    throw { message: 'Registrations closed for this event' };
-  }
-
-  if (event.capacity === attendees.length) {
-    throw { message: 'Event capacity reached' };
-  }
-
-  const emailChecklist = attendees.filter((attendee) => {
-    return attendee.email == body.email;
-  });
-
-  if (emailChecklist.length) {
-    throw { message: 'Email has already been registered' };
-  }
-
-  attendees.push(body);
-
-  body = {
-    attendees: attendees,
-  };
-
-  return await Event.findByIdAndUpdate(id, body, {
-    new: true,
-    runValidators: false,
-  });
-};
-
 export default {
   createEvent,
   getEventById,
@@ -228,5 +191,4 @@ export default {
   getLatestEvents,
   updateEventByID,
   deleteEventById,
-  registerAttendee,
 };
