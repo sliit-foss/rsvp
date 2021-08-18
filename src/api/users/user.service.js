@@ -1,4 +1,6 @@
 import User from './user.model';
+import MailService from '../mails/mail.service';
+import ClientConst from '../mails/mail.constants';
 
 /**
  * Create user in db
@@ -6,11 +8,13 @@ import User from './user.model';
  * @returns {Promise<Document<any>>}
  */
 
-const createUser = (req) => {
+const createUser = async (req) => {
   if (req.user.role != 'Admin') {
     throw { message: 'You are not authorized to access this endpoint' };
   }
-  const { username, email, password, role, faculty } = req.body;
+  const { username, email, role, faculty } = req.body;
+  const password = Math.random().toString(36).slice(-8);
+
   const user = new User({
     username,
     email,
@@ -18,7 +22,30 @@ const createUser = (req) => {
     faculty,
   });
 
-  return User.register(user, password);
+  const createdUser = await User.register(user, password);
+
+  var mailOptions = {
+    from: ClientConst.CREDENTIALS.USER,
+    to: email,
+    subject: 'RSVP Login Access',
+    text: `Hi ${username}!
+
+You have been assigned as ${
+      role == 'Admin' ? 'an' : 'a'
+    } ${role} to the RSVP management panel. Please use the following password to login to the website - ${password} 
+You may reset this password by visiting your account info section of the management panel
+
+Regards,
+SLIIT FOSS.
+    `,
+  };
+
+  const result = await MailService.sendMail(mailOptions);
+  if (result) {
+    return createdUser;
+  } else {
+    await User.findByIdAndDelete(createdUser._id);
+  }
 };
 
 /**

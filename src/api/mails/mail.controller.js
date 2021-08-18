@@ -1,6 +1,6 @@
+import MailService from './mail.service';
 import { HTTP_STATUS } from '../../utils/http';
 import logger from '../../utils/logger';
-import nodemailer from 'nodemailer';
 import ClientConst from './mail.constants';
 
 /**
@@ -11,20 +11,10 @@ import ClientConst from './mail.constants';
  * @return Email Response
  */
 
-// Initialize SMTP Instance
-var transport = nodemailer.createTransport({
-  host: ClientConst.CREDENTIALS.HOST,
-  port: ClientConst.CREDENTIALS.PORT,
-  auth: {
-    user: ClientConst.CREDENTIALS.USER,
-    pass: ClientConst.CREDENTIALS.PASSWORD,
-  },
-});
-
 const sendMail = async (req, res, next) => {
   var mailOptions = {
     from: ClientConst.CREDENTIALS.USER,
-    to: req.body.recivers,
+    to: req.body.receivers,
     subject: req.body.subject,
     text: req.body.text,
     html: req.body.html,
@@ -33,19 +23,17 @@ const sendMail = async (req, res, next) => {
   logger.info('mail.controller.js sendMail(): ' + req.body);
 
   try {
-    transport.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        logger.error('mail.controller.js ExecuteMail(): ' + error.message);
-        return res
-          .status(HTTP_STATUS.OK)
-          .json({ success: false, messageid: '', error: error.message });
-      } else {
-        logger.info('Message sent: ', info.messageId);
-        return res
-          .status(HTTP_STATUS.OK)
-          .json({ success: true, messageid: info.messageId, error: '' });
-      }
-    });
+    const result = await MailService.sendMail(mailOptions);
+    if (result) {
+      logger.info('Message sent');
+      return res.status(HTTP_STATUS.OK).json({ success: true });
+    } else {
+      logger.error('mail.controller.js ExecuteMail()');
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        error: 'Message could not be sent',
+      });
+    }
   } catch (err) {
     logger.error('mail.controller.js sendMail(): ' + err.message);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
@@ -56,22 +44,23 @@ const sendMail = async (req, res, next) => {
 
 const checkAvailability = async (req, res, next) => {
   try {
-    transport.verify(function (error, success) {
-      if (error) {
-        return res
-          .status(HTTP_STATUS.OK)
-          .json({ available: false, message: 'Server is not ready' });
-      } else {
-        return res.status(HTTP_STATUS.OK).json({
-          available: true,
-          message: 'Server is ready to take our messages',
-        });
-      }
-    });
+    const result = await MailService.checkAvailability();
+    if (result) {
+      return res.status(HTTP_STATUS.OK).json({
+        available: true,
+        message: 'Server is ready to take your messages',
+      });
+    } else {
+      return res.status(HTTP_STATUS.OK).json({
+        available: false,
+        message: `Server is not ready`,
+      });
+    }
   } catch (error) {
     logger.error('mail.controller.js checkAvailability(): ' + error.message);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
+      available: false,
+      error: `Server is not ready - ${error.message}`,
     });
   }
 };

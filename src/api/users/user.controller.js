@@ -11,6 +11,11 @@ import logger from '../../utils/logger';
 const createUser = async (req, res) => {
   try {
     const user = await UserService.createUser(req);
+    if (!user) {
+      return res
+        .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+        .json({ error: 'Error creating user' });
+    }
     return res.status(HTTP_STATUS.CREATED).json(user);
   } catch (err) {
     logger.error('user.controller.js createUser(): ' + err.message);
