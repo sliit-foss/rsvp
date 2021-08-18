@@ -1,25 +1,8 @@
-import User from './user.model';
+import User from '../users/user.model';
 import jsonwebtoken from 'jsonwebtoken';
 import { PRIV_KEY } from '../../config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import passport from 'passport';
-
-/**
- * Create admin in db
- * @param username
- * @param email
- * @param password
- * @returns {Promise<Document<any>>}
- */
-
-const createAdmin = ({ username, email, password }) => {
-  const user = new User({
-    username,
-    email,
-  });
-
-  return User.register(user, password);
-};
 
 /**
  * Issue JWT
@@ -71,6 +54,5 @@ passport.use(
 );
 
 export default {
-  createAdmin,
   issueJWT,
 };
