@@ -161,7 +161,7 @@ const updateEventByID = async (id, body, user) => {
   }
 
   const event = await Event.findById(id);
-  if (event.createdBy != user.faculty) {
+  if (event.createdBy != user.faculty && user.role!="Admin") {
     throw {
       message: 'You can only make changes to events published by your faculty',
     };
@@ -181,7 +181,7 @@ const updateEventByID = async (id, body, user) => {
  */
 const deleteEventById = async (id, user) => {
   const event = await Event.findById(id);
-  if (event.createdBy != user.faculty) {
+  if (event.createdBy != user.faculty && user.role!="Admin") {
     throw {
       message: 'You can only delete events published by your faculty',
     };

@@ -37,7 +37,10 @@ const attendEvent = async (req, res) => {
 const getAttendees = async (req, res) => {
   logger.info('attendee.controller.js getAttendees(): id: ' + req.params.id);
   try {
-    const attendees = await AttendeeService.getAttendees(req.params.id);
+    const attendees = await AttendeeService.getAttendees(
+      req.params.id,
+      req.user
+    );
     return res.status(HTTP_STATUS.OK).json(attendees);
   } catch (err) {
     logger.error('attendee.controller.js getAttendees(): ' + err.message);

@@ -4,7 +4,7 @@ import passport from 'passport';
 
 const router = Router();
 router.post(
-  '/create',
+  '/',
   passport.authenticate('jwt', { session: false }),
   UserController.createUser
 );

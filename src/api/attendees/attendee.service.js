@@ -44,11 +44,18 @@ const attendEvent = async (id, body) => {
 
 /**
  *
- * @param perpage
- * @param page
+ * @param id
+ * @param user
  * @returns {Query<Array<Document>, Document>}
  */
-const getAttendees = async (id) => {
+const getAttendees = async (id,user) => {
+  const event = await Event.findById(id);
+  if (event.createdBy != user.faculty && user.role!="Admin") {
+    throw {
+      message: 'You can only view attendees of events published by your faculty',
+    };
+  }
+
   const results = await Event.findById(id).select(['attendees']);
   if (!results) {
     throw { message: `Event not found with id:${id}` };
