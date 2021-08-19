@@ -12,17 +12,40 @@ import ClientConst from './mail.constants';
  */
 
 const sendMail = async (req, res, next) => {
-  var mailOptions = {
-    from: ClientConst.CREDENTIALS.USER,
-    to: req.body.receivers,
-    subject: req.body.subject,
-    text: req.body.text,
-    html: req.body.html,
-  };
-
   logger.info('mail.controller.js sendMail(): ' + req.body);
-
   try {
+    const { name, email, subject, text } = req.body;
+    if (!name) {
+      throw {
+        message: 'Please specify your name',
+      };
+    }
+    if (!email) {
+      throw {
+        message: 'Please specify your email',
+      };
+    }
+    if (!subject) {
+      throw {
+        message: 'Please specify a subject',
+      };
+    }
+    if (!text) {
+      throw {
+        message: 'Please specify a message body',
+      };
+    }
+
+    var mailOptions = {
+      from: ClientConst.CREDENTIALS.USER,
+      to: 'infosliitfoss@gmail.com',
+      subject: subject,
+      text: `Sender email - ${email}
+Sender name - ${name}
+
+Message - ${text}`,
+    };
+
     const result = await MailService.sendMail(mailOptions);
     if (result) {
       logger.info('Message sent');
