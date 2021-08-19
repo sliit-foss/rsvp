@@ -14,7 +14,7 @@ router.get(
   UserController.getAllUsers
 );
 router.get(
-    '/myUserData',
+    '/myuserdata',
     passport.authenticate('jwt', { session: false }),
     UserController.getMyUserData
   );
@@ -25,7 +25,7 @@ router.delete(
 );
 
 router.put(
-  '/changePassword',
+  '/changepassword',
   passport.authenticate('jwt', { session: false }),
   UserController.changeUserPassword
 );
