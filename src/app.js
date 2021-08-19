@@ -6,7 +6,7 @@ import { default as connect } from './utils/database';
 import { default as initialize } from './utils/firebase';
 import router from './api/routes';
 import { SESSION_SECRET } from './config';
-import User from './api/auth/user.model';
+import User from './api/users/user.model';
 import LocalStrategy from 'passport-local';
 import morgan from 'morgan';
 import createMemoryStore from 'memorystore';

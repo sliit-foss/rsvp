@@ -11,7 +11,7 @@ import logger from '../../utils/logger';
 const createEvent = async (req, res) => {
   logger.info('event.controller.js createEvent()');
   try {
-    const event = await EventService.createEvent(req.body, req.user.id);
+    const event = await EventService.createEvent(req.body, req.user.faculty);
     return res.status(HTTP_STATUS.CREATED).json(event);
   } catch (err) {
     logger.error('event.controller.js createEvent(): ' + err.message);
@@ -92,14 +92,17 @@ const updateEventByID = async (req, res) => {
   try {
     const updatedEvent = await EventService.updateEventByID(
       req.params.id,
-      req.body
+      req.body,
+      req.user,
     );
     if (!updatedEvent) {
       return res
         .status(HTTP_STATUS.BAD_REQUEST)
         .json({ error: `Event not found with id:${req.params.id}` });
     }
-    return res.status(HTTP_STATUS.OK).json({ message: `Sucessfully updated event with id:${req.params.id}` });
+    return res
+      .status(HTTP_STATUS.OK)
+      .json({ message: `Sucessfully updated event with id:${req.params.id}` });
   } catch (err) {
     logger.error('event.controller.js updateEventByID(): ' + err.message);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
@@ -117,7 +120,7 @@ const updateEventByID = async (req, res) => {
 const deleteEventById = async (req, res) => {
   logger.info('event.controller.js deleteEventById(): id: ' + req.params.id);
   try {
-    const event = await EventService.deleteEventById(req.params.id);
+    const event = await EventService.deleteEventById(req.params.id, req.user);
     if (!event) {
       return res
         .status(HTTP_STATUS.BAD_REQUEST)

@@ -119,11 +119,15 @@ const getLatestEvents = async () => {
   const results = await Event.find()
     .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
     .sort({ status: 1, startTime: 1 })
-    .select(['-attendees'])
+    .select(['-attendees', '-speakers'])
     .limit(3);
 
   if (!results.length) {
-    return [await Event.findOne().sort({ startTime: -1 })];
+    return [
+      await Event.findOne()
+        .sort({ startTime: -1 })
+        .select(['-attendees', '-speakers']),
+    ];
   } else {
     return results;
   }
@@ -133,9 +137,10 @@ const getLatestEvents = async () => {
  *
  * @param id
  * @param body
+ * @param user
  * @returns {Query<Document | null, Document>}
  */
-const updateEventByID = async (id, body) => {
+const updateEventByID = async (id, body, user) => {
   const eventName = body.name
     ? body.name
     : (await Event.findById(id).select(['name'])).name;
@@ -155,6 +160,13 @@ const updateEventByID = async (id, body) => {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
   }
 
+  const event = await Event.findById(id);
+  if (event.createdBy != user.faculty && user.role!="Admin") {
+    throw {
+      message: 'You can only make changes to events published by your faculty',
+    };
+  }
+
   return await Event.findByIdAndUpdate(id, body, {
     new: true,
     runValidators: false,
@@ -164,10 +176,18 @@ const updateEventByID = async (id, body) => {
 /**
  *
  * @param id
+ * @param user
  * @returns {Query<Document | null, Document>}
  */
-const deleteEventById = async (id) =>
-  Event.findById(id, async function (err, event) {
+const deleteEventById = async (id, user) => {
+  const event = await Event.findById(id);
+  if (event.createdBy != user.faculty && user.role!="Admin") {
+    throw {
+      message: 'You can only delete events published by your faculty',
+    };
+  }
+
+  return await Event.findById(id, async function (err, event) {
     if (!err) {
       await ImageDelete(event.headerImage);
 
@@ -183,7 +203,7 @@ const deleteEventById = async (id) =>
     }
     event.remove();
   });
-
+};
 export default {
   createEvent,
   getEventById,
