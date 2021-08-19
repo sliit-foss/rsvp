@@ -123,11 +123,12 @@ const getLatestEvents = async () => {
     .limit(3);
 
   if (!results.length) {
-    return [
-      await Event.findOne()
-        .sort({ startTime: -1 })
-        .select(['-attendees', '-speakers']),
-    ];
+    const event = await Event.findOne()
+      .sort({ startTime: -1 })
+      .select(['-attendees', '-speakers']);
+    if (event) {
+      return [event];
+    }
   } else {
     return results;
   }
@@ -161,7 +162,7 @@ const updateEventByID = async (id, body, user) => {
   }
 
   const event = await Event.findById(id);
-  if (event.createdBy != user.faculty && user.role!="Admin") {
+  if (event.createdBy != user.faculty && user.role != 'Admin') {
     throw {
       message: 'You can only make changes to events published by your faculty',
     };
@@ -181,7 +182,7 @@ const updateEventByID = async (id, body, user) => {
  */
 const deleteEventById = async (id, user) => {
   const event = await Event.findById(id);
-  if (event.createdBy != user.faculty && user.role!="Admin") {
+  if (event.createdBy != user.faculty && user.role != 'Admin') {
     throw {
       message: 'You can only delete events published by your faculty',
     };
