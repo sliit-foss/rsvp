@@ -78,6 +78,9 @@ const deleteUserById = (req) => {
   if (req.user.role != 'Admin') {
     throw { message: 'You are not authorized to access this endpoint' };
   }
+  if (req.user._id == req.params.id) {
+    throw { message: 'You cannot delete your own account' };
+  }
   return User.findByIdAndDelete(req.params.id);
 };
 

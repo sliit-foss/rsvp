@@ -2,7 +2,6 @@ import Event from './event.model';
 import {
   EVENT_STATUS,
   getEventStatus,
-  uploadEventPhotos,
   uploadSpeakerPhotos,
 } from './event.constants';
 import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
@@ -12,7 +11,6 @@ import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
  * @param name
  * @param description
  * @param headerImage
- * @param photos
  * @param venue
  * @param startTime
  * @param endTime
@@ -30,7 +28,6 @@ const createEvent = async (
     name,
     description,
     headerImage,
-    photos,
     venue,
     startTime,
     endTime,
@@ -44,7 +41,6 @@ const createEvent = async (
   createdBy
 ) => {
   headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
-  photos = await uploadEventPhotos(photos, name);
   speakers = await uploadSpeakerPhotos(speakers, name);
 
   if (
@@ -59,7 +55,6 @@ const createEvent = async (
     name,
     description,
     headerImage,
-    photos,
     venue,
     startTime,
     endTime,
@@ -142,30 +137,30 @@ const getLatestEvents = async () => {
  * @returns {Query<Document | null, Document>}
  */
 const updateEventByID = async (id, body, user) => {
+  const event = await Event.findById(id);
+  if (event.createdBy != user.faculty && user.role != 'Admin') {
+    throw {
+      message: 'You can only make changes to events published by your faculty',
+    };
+  }
+  if (body.speakers && body.speakers.length == 0) {
+    throw {
+      message: 'There needs to be at least one speaker',
+    };
+  }
   const eventName = body.name
     ? body.name
     : (await Event.findById(id).select(['name'])).name;
 
-  if (body.headerImage) {
+  if (body.headerImage && body.headerImage != event.headerImage) {
     body.headerImage = await ImageUpload(
       body.headerImage,
       `${eventName}/headerImage`
     );
   }
 
-  if (body.photos) {
-    body.photos = await uploadEventPhotos(body.photos, eventName);
-  }
-
   if (body.speakers) {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
-  }
-
-  const event = await Event.findById(id);
-  if (event.createdBy != user.faculty && user.role != 'Admin') {
-    throw {
-      message: 'You can only make changes to events published by your faculty',
-    };
   }
 
   return await Event.findByIdAndUpdate(id, body, {
@@ -190,15 +185,14 @@ const deleteEventById = async (id, user) => {
 
   return await Event.findById(id, async function (err, event) {
     if (!err) {
-      await ImageDelete(event.headerImage);
-
-      event.photos.map(async function (photo) {
-        await ImageDelete(photo);
-      });
-
-      event.speakers.map(async function (speaker) {
-        await ImageDelete(speaker.photo);
-      });
+      try {
+        await ImageDelete(event.headerImage);
+        event.speakers.map(async function (speaker) {
+          await ImageDelete(speaker.photo);
+        });
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       console.log(err);
     }

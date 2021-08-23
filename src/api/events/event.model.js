@@ -8,8 +8,7 @@ import { Schema, model } from 'mongoose';
 const speakerSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  status: { type: String, required: true },
-  company: { type: String, required: true },
+  occupation: { type: String, required: true },
   topic: { type: String, required: true },
   photo: { type: String, required: true },
   twitterURL: { type: String, required: true },
@@ -27,7 +26,6 @@ const eventSchema = new Schema(
     name: { type: String, required: true },
     description: { type: String, required: true },
     headerImage: { type: String, required: true },
-    photos: { type: [String] },
     venue: { type: String, required: true },
     startTime: { type: Number, required: true },
     endTime: { type: Number, required: true },
