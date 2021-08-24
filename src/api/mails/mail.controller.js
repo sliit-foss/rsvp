@@ -15,27 +15,24 @@ const sendMail = async (req, res, next) => {
   logger.info('mail.controller.js sendMail(): ' + req.body);
   try {
     const { name, email, subject, text } = req.body;
-    if (!name) {
-      throw {
-        message: 'Please specify your name',
-      };
+    switch (undefined) {
+      case name:
+        throw {
+          message: 'Please specify your name',
+        };
+      case email:
+        throw {
+          message: 'Please specify your email',
+        };
+      case subject:
+        throw {
+          message: 'Please specify a subject',
+        };
+      case text:
+        throw {
+          message: 'Please specify a message body',
+        };
     }
-    if (!email) {
-      throw {
-        message: 'Please specify your email',
-      };
-    }
-    if (!subject) {
-      throw {
-        message: 'Please specify a subject',
-      };
-    }
-    if (!text) {
-      throw {
-        message: 'Please specify a message body',
-      };
-    }
-
     var mailOptions = {
       from: ClientConst.CREDENTIALS.USER,
       to: 'infosliitfoss@gmail.com',
