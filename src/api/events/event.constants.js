@@ -24,27 +24,18 @@ const getEventStatus = (startTime, endTime) => {
   }
 };
 
-const uploadEventPhotos = async (photos, name) => {
+const uploadSpeakerPhotos = async (modifiedSpeakers, name) => {
   return await Promise.all(
-    photos.map(async function (photo, index) {
-      await ImageUpload(photo, `${name}/photo` + index.toString()).then(
-        (imageURL) => (photo = imageURL)
-      );
-      return photo;
-    })
-  );
-};
-
-const uploadSpeakerPhotos = async (speakers, name) => {
-  return await Promise.all(
-    speakers.map(async function (speaker, index) {
-      await ImageUpload(
-        speaker.photo,
-        `${name}/speaker` + index.toString()
-      ).then((imageURL) => (speaker.photo = imageURL));
+    modifiedSpeakers.map(async function (speaker, index) {
+      if (!speaker.photo.includes('https://firebasestorage.googleapis.com')) {
+        await ImageUpload(
+          speaker.photo,
+          `${name}/speaker` + index.toString()
+        ).then((imageURL) => (speaker.photo = imageURL));
+      }
       return speaker;
     })
   );
 };
 
-export { EVENT_STATUS, getEventStatus, uploadEventPhotos, uploadSpeakerPhotos };
+export { EVENT_STATUS, getEventStatus, uploadSpeakerPhotos };
