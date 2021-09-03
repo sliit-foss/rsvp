@@ -19,7 +19,8 @@ const userLogin = async (req, res, next) => {
       message: 'Authentication successful',
       token: tokenObject.token,
       expiresIn: tokenObject.expires,
-      userRole: user.role
+      userRole: user.role,
+      faculty: user.faculty
     });
   })(req, res, next);
 };
