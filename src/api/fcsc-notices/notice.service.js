@@ -1,4 +1,5 @@
 import Notice from './notice.model';
+import { validateRequest } from './notice.constants';
 
 /**
  * Create notice in db
@@ -7,9 +8,7 @@ import Notice from './notice.model';
  */
 
 const addNotice = async (req) => {
-  if (req.user.role != 'Admin' && req.user.faculty != 'FCSC') {
-    throw { message: 'You are not authorized to access this endpoint' };
-  }
+  validateRequest(req);
   const { title, body, category } = req.body;
 
   const notice = new Notice({
@@ -26,15 +25,13 @@ const addNotice = async (req) => {
  * @param req
  * @returns {Promise<void>}
  */
- const editNotice = (req) => {
-    if (req.user.role != 'Admin' && req.user.faculty != 'FCSC') {
-      throw { message: 'You are not authorized to access this endpoint' };
-    }
-    return Notice.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: false,
-    });
-  };
+const editNotice = (req) => {
+  validateRequest(req);
+  return Notice.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: false,
+  });
+};
 
 /**
  *
@@ -42,9 +39,7 @@ const addNotice = async (req) => {
  * @returns {Promise<void>}
  */
 const deleteNotice = (req) => {
-  if (req.user.role != 'Admin' && req.user.faculty != 'FCSC') {
-    throw { message: 'You are not authorized to access this endpoint' };
-  }
+  validateRequest(req);
   return Notice.findByIdAndDelete(req.params.id);
 };
 
