@@ -5,6 +5,7 @@ import {
   uploadSpeakerPhotos,
 } from './event.constants';
 import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
+import { validateRequest } from '../../utils/requestValidator';
 
 /**
  * Create event in db
@@ -138,11 +139,11 @@ const getLatestEvents = async () => {
  */
 const updateEventByID = async (id, body, user) => {
   const event = await Event.findById(id);
-  if (event.createdBy != user.faculty && user.role != 'Admin') {
-    throw {
-      message: 'You can only make changes to events published by your faculty',
-    };
-  }
+  validateRequest(
+    event,
+    user,
+    'You can only make changes to events published by your faculty'
+  );
   if (body.speakers && body.speakers.length == 0) {
     throw {
       message: 'There needs to be at least one speaker',
@@ -177,12 +178,11 @@ const updateEventByID = async (id, body, user) => {
  */
 const deleteEventById = async (id, user) => {
   const event = await Event.findById(id);
-  if (event.createdBy != user.faculty && user.role != 'Admin') {
-    throw {
-      message: 'You can only delete events published by your faculty',
-    };
-  }
-
+  validateRequest(
+    event,
+    user,
+    'You can only delete events published by your faculty'
+  );
   return await Event.findById(id, async function (err, event) {
     if (!err) {
       try {

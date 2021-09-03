@@ -1,5 +1,5 @@
 import Notice from './notice.model';
-import { validateRequest } from './notice.constants';
+import { validateFCSCRequest } from '../../utils/requestValidator';
 
 /**
  * Create notice in db
@@ -8,7 +8,7 @@ import { validateRequest } from './notice.constants';
  */
 
 const addNotice = async (req) => {
-  validateRequest(req);
+  validateFCSCRequest(req);
   const { title, body, category } = req.body;
 
   const notice = new Notice({
@@ -26,7 +26,7 @@ const addNotice = async (req) => {
  * @returns {Promise<void>}
  */
 const editNotice = (req) => {
-  validateRequest(req);
+  validateFCSCRequest(req);
   return Notice.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: false,
@@ -39,7 +39,7 @@ const editNotice = (req) => {
  * @returns {Promise<void>}
  */
 const deleteNotice = (req) => {
-  validateRequest(req);
+  validateFCSCRequest(req);
   return Notice.findByIdAndDelete(req.params.id);
 };
 
