@@ -1,6 +1,7 @@
 import User from './user.model';
 import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';
+import { validateAdminRequest } from '../../utils/requestValidator';
 
 /**
  * Create user in db
@@ -9,9 +10,7 @@ import ClientConst from '../mails/mail.constants';
  */
 
 const createUser = async (req) => {
-  if (req.user.role != 'Admin') {
-    throw { message: 'You are not authorized to access this endpoint' };
-  }
+  validateAdminRequest(req);
   const { username, email, role, faculty } = req.body;
   const password = Math.random().toString(36).slice(-8);
 
@@ -54,9 +53,7 @@ SLIIT FOSS.
  * @returns {Promise<void>}
  */
 const getAllUsers = (req) => {
-  if (req.user.role != 'Admin') {
-    throw { message: 'You are not authorized to access this endpoint' };
-  }
+  validateAdminRequest(req);
   return User.find().sort({ role: -1 });
 };
 
@@ -75,9 +72,7 @@ const getMyUserData = (req) => {
  * @returns {Promise<void>}
  */
 const deleteUserById = (req) => {
-  if (req.user.role != 'Admin') {
-    throw { message: 'You are not authorized to access this endpoint' };
-  }
+  validateAdminRequest(req);
   if (req.user._id == req.params.id) {
     throw { message: 'You cannot delete your own account' };
   }

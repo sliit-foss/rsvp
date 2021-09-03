@@ -1,3 +1,4 @@
+import { validateRequest } from '../../utils/requestValidator';
 import Event from '../events/event.model';
 
 /**
@@ -12,23 +13,19 @@ const attendEvent = async (id, body) => {
     throw { message: `Event not found with id:${id}` };
   }
   const attendees = event.attendees || [];
-
   if (event.status !== 'Upcoming') {
     throw { message: 'Registrations closed for this event' };
   }
-
   if (event.capacity === attendees.length) {
     throw { message: 'Event capacity reached' };
   }
-
   const emailChecklist = attendees.filter((attendee) => {
     return attendee.email == body.email;
   });
-
   if (emailChecklist.length) {
     throw { message: 'Email has already been registered' };
   }
-
+  
   attendees.push(body);
 
   body = {
@@ -48,14 +45,13 @@ const attendEvent = async (id, body) => {
  * @param user
  * @returns {Query<Array<Document>, Document>}
  */
-const getAttendees = async (id,user) => {
+const getAttendees = async (id, user) => {
   const event = await Event.findById(id);
-  if (event.createdBy != user.faculty && user.role!="Admin") {
-    throw {
-      message: 'You can only view attendees of events published by your faculty',
-    };
-  }
-
+  validateRequest(
+    event,
+    user,
+    'You can only view attendees of events published by your faculty'
+  );
   const results = await Event.findById(id).select(['attendees']);
   if (!results) {
     throw { message: `Event not found with id:${id}` };
