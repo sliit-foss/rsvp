@@ -14,7 +14,7 @@ import ClientConst from './mail.constants';
 const sendMail = async (req, res, next) => {
   logger.info('mail.controller.js sendMail(): ' + req.body);
   try {
-    const { name, email, subject, text } = req.body;
+    const { name, email, subject, text, receiver } = req.body;
     switch (undefined) {
       case name:
         throw {
@@ -35,7 +35,7 @@ const sendMail = async (req, res, next) => {
     }
     var mailOptions = {
       from: ClientConst.CREDENTIALS.USER,
-      to: 'infosliitfoss@gmail.com',
+      to: receiver,
       subject: subject,
       text: `Sender email - ${email}
 Sender name - ${name}
