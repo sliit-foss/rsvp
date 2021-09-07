@@ -1,5 +1,6 @@
 import Notice from './notice.model';
 import { validateFCSCRequest } from '../../utils/requestValidator';
+import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
 
 /**
  * Create notice in db
@@ -7,14 +8,16 @@ import { validateFCSCRequest } from '../../utils/requestValidator';
  * @returns {Promise<Document<any>>}
  */
 
-const addNotice = async (req) => {
+const addNotice = async (req, title, body, category, photo) => {
   validateFCSCRequest(req);
-  const { title, body, category } = req.body;
-
+  if (photo) {
+    photo = await ImageUpload(photo, `noticeBanners/${title + ' ' + category}`);
+  }
   const notice = new Notice({
     title,
     body,
     category,
+    photo,
   });
 
   return notice.save();
@@ -25,8 +28,15 @@ const addNotice = async (req) => {
  * @param req
  * @returns {Promise<void>}
  */
-const editNotice = (req) => {
+const editNotice = async (req) => {
   validateFCSCRequest(req);
+  const notice = await Notice.findById(req.params.id);
+  if (req.body.photo != notice.photo) {
+    req.body.photo = await ImageUpload(
+      req.body.photo,
+      `noticeBanners/${req.body.title + ' ' + req.body.category}`
+    );
+  }
   return Notice.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: false,
@@ -38,8 +48,13 @@ const editNotice = (req) => {
  * @param req
  * @returns {Promise<void>}
  */
-const deleteNotice = (req) => {
+const deleteNotice = async (req) => {
   validateFCSCRequest(req);
+  const notice = await Notice.findById(req.params.id);
+  if (notice.photo.includes('https://firebasestorage.googleapis.com')) {
+    await ImageDelete(notice.photo);
+  }
+
   return Notice.findByIdAndDelete(req.params.id);
 };
 

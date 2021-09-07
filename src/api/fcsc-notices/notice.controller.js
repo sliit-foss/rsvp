@@ -10,7 +10,13 @@ import logger from '../../utils/logger';
  */
 const addNotice = async (req, res) => {
   try {
-    const notice = await NoticeService.addNotice(req);
+    const notice = await NoticeService.addNotice(
+      req,
+      req.body.title,
+      req.body.body,
+      req.body.category,
+      req.body.photo
+    );
     if (!notice) {
       return res
         .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
