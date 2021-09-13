@@ -1,5 +1,7 @@
 import { validateRequest } from '../../utils/requestValidator';
 import Event from '../events/event.model';
+import MailService from '../mails/mail.service';
+import ClientConst from '../mails/mail.constants';
 
 /**
  *
@@ -24,6 +26,34 @@ const attendEvent = async (id, body) => {
   });
   if (emailChecklist.length) {
     throw { message: 'Email has already been registered' };
+  }
+
+  if(event.joinLink){
+    var mailOptions = {
+      from: ClientConst.CREDENTIALS.USER,
+      to: body.email,
+      subject: `${event.name} Join Link`,
+      text: `Hi ${body.name}!
+  
+Thank you for registering for ${event.name}.
+Date : - ${new Date( event.startTime)
+    .toLocaleString('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    })
+    .replaceAll(',', ' ')}
+Meeting Link : - ${event.joinLink}
+We look foward to seeing you there!
+  
+Regards,
+SLIIT ${event.createdBy}.
+      `,
+    };
+    await MailService.sendMail(mailOptions);
   }
   
   attendees.push(body);

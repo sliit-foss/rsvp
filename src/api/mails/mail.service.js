@@ -11,8 +11,8 @@ import ClientConst from './mail.constants';
 
 // Initialize SMTP Instance
 var transport = nodemailer.createTransport({
+  service: 'gmail',
   host: ClientConst.CREDENTIALS.HOST,
-  port: ClientConst.CREDENTIALS.PORT,
   auth: {
     user: ClientConst.CREDENTIALS.USER,
     pass: ClientConst.CREDENTIALS.PASSWORD,
