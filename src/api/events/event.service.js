@@ -6,6 +6,8 @@ import {
 } from './event.constants';
 import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
 import { validateRequest } from '../../utils/requestValidator';
+import MailService from '../mails/mail.service';
+import ClientConst from '../mails/mail.constants';
 
 /**
  * Create event in db
@@ -21,6 +23,7 @@ import { validateRequest } from '../../utils/requestValidator';
  * @param capacity
  * @param tags
  * @param createdBy
+ * @param joinLink
  * @param host
  * @returns {Promise<Document<any>>}
  */
@@ -37,6 +40,7 @@ const createEvent = async (
     speakers,
     capacity,
     tags,
+    joinLink,
     host,
   },
   createdBy
@@ -66,6 +70,7 @@ const createEvent = async (
     tags,
     createdBy,
     host,
+    joinLink,
     createdBy,
   });
 
@@ -162,6 +167,29 @@ const updateEventByID = async (id, body, user) => {
 
   if (body.speakers) {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
+  }
+
+  if(body.joinLink){
+    const attendees = event.attendees;
+    await Promise.all(
+      attendees.map(async function (attendee) {
+        var mailOptions = {
+          from: ClientConst.CREDENTIALS.USER,
+          to: attendee.email,
+          subject: `${event.name} - Updated Join Link`,
+          text: `Hi ${attendee.name}!
+      
+Please note that the meeting link for ${event.name} has been updated.
+Updated Meeting Link : - ${body.joinLink}
+We look foward to seeing you there!
+      
+Regards,
+SLIIT ${event.createdBy}.
+          `,
+        };
+        await MailService.sendMail(mailOptions);
+      })
+    );
   }
 
   return await Event.findByIdAndUpdate(id, body, {

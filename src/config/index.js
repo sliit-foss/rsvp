@@ -1,10 +1,9 @@
 require('dotenv').config();
 
 export const MAIL = {
-  HOST: process.env.MAIL_HOST || 'smtp.mailtrap.io',
-  PORT: process.env.MAIL_PORT || '2525',
-  USER: process.env.MAIL_USER || 'c8cca3941aea9c',
-  PASSWORD: process.env.MAIL_PASSWORD || '18763bafd470a9',
+  HOST: process.env.MAIL_HOST || 'smtp.gmail.com',
+  USER: process.env.MAIL_USER || 'gmail_username',
+  PASSWORD: process.env.MAIL_PASSWORD || 'gmail_password',
 };
 
 export const PORT = process.env.PORT || 4000;

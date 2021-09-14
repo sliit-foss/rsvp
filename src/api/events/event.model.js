@@ -36,8 +36,9 @@ const eventSchema = new Schema(
     attendees: { type: [attendeeSchema] },
     capacity: { type: Number, required: true },
     tags: { type: [String] },
+    joinLink: { type: String },
     createdBy: { type: String },
-    host: { type: String }, // TODO: change to object id, ref: host
+    host: { type: String },
   },
   { timestamps: true }
 );
