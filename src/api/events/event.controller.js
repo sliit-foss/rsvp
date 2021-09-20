@@ -51,7 +51,8 @@ const getAllEvents = async (req, res) => {
   try {
     const events = await EventService.getAllEvents(
       req.query.perpage,
-      req.query.page
+      req.query.page,
+      req.params.club,
     );
     return res.status(HTTP_STATUS.OK).json(events);
   } catch (err) {
@@ -71,7 +72,7 @@ const getAllEvents = async (req, res) => {
 const getLatestEvents = async (req, res) => {
   logger.info('event.controller.js getLatestEvent()');
   try {
-    const events = await EventService.getLatestEvents();
+    const events = await EventService.getLatestEvents(req.params.club);
     return res.status(HTTP_STATUS.OK).json(events);
   } catch (err) {
     logger.error('event.controller.js getLatestEvent(): ' + err.message);

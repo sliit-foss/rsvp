@@ -88,9 +88,10 @@ const getEventById = (id) => Event.findById(id).select(['-attendees']);
  *
  * @param perpage
  * @param page
+ * @param club
  * @returns {Query<Array<Document>, Document>}
  */
-const getAllEvents = async (perpage, page) => {
+const getAllEvents = async (perpage, page, club) => {
   await Event.find(async function (err, events) {
     if (!err) {
       events.map(async function (event) {
@@ -105,7 +106,7 @@ const getAllEvents = async (perpage, page) => {
       });
     }
   });
-  return await Event.find()
+  return await Event.find(club == 'fcsc' ? { createdBy: 'FCSC' } : {})
     .sort({ startTime: -1 })
     .limit(parseInt(perpage))
     .skip((parseInt(page) - 1) * parseInt(page))
@@ -114,17 +115,18 @@ const getAllEvents = async (perpage, page) => {
 
 /**
  *
+ * @param club
  * @returns {Query<Array<Document>, Document>}
  */
-const getLatestEvents = async () => {
-  const results = await Event.find()
+const getLatestEvents = async (club) => {
+  const results = await Event.find(club == 'fcsc' ? { createdBy: 'FCSC' } : {})
     .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
     .sort({ status: 1, startTime: 1 })
     .select(['-attendees', '-speakers'])
     .limit(3);
 
   if (!results.length) {
-    const event = await Event.findOne()
+    const event = await Event.findOne(club == 'fcsc' ? { createdBy: 'FCSC' } : {})
       .sort({ startTime: -1 })
       .select(['-attendees', '-speakers']);
     if (event) {
@@ -169,7 +171,7 @@ const updateEventByID = async (id, body, user) => {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
   }
 
-  if(body.joinLink){
+  if (body.joinLink) {
     const attendees = event.attendees;
     await Promise.all(
       attendees.map(async function (attendee) {
