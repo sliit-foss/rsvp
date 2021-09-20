@@ -171,6 +171,7 @@ const updateEventByID = async (id, body, user) => {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
   }
 
+
   if (body.joinLink) {
     const attendees = event.attendees;
     await Promise.all(
