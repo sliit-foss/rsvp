@@ -4,8 +4,8 @@ import passport from 'passport';
 
 const router = Router();
 
-router.get('/', EventController.getAllEvents);
-router.get('/latest', EventController.getLatestEvents);
+router.get('/:club', EventController.getAllEvents);
+router.get('/latest/:club', EventController.getLatestEvents);
 router.get('/:id', EventController.getEventById);
 router.post(
   '/',
