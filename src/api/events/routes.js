@@ -4,7 +4,7 @@ import passport from 'passport';
 
 const router = Router();
 
-router.get('/:club', EventController.getAllEvents);
+router.get('/allevents/:club', EventController.getAllEvents);
 router.get('/latest/:club', EventController.getLatestEvents);
 router.get('/:id', EventController.getEventById);
 router.post(
