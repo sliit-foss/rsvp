@@ -2,8 +2,8 @@ require('dotenv').config();
 
 export const MAIL = {
   HOST: process.env.MAIL_HOST || 'smtp.gmail.com',
-  USER: process.env.MAIL_USER || 'gmail_username',
-  PASSWORD: process.env.MAIL_PASSWORD || 'gmail_password',
+  USER: process.env.MAIL_USER || 'rsvptemporary@gmail.com',
+  PASSWORD: process.env.MAIL_PASSWORD || 'A789x#123',
 };
 
 export const PORT = process.env.PORT || 4000;
