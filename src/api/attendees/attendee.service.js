@@ -28,7 +28,19 @@ const attendEvent = async (id, body) => {
     throw { message: 'Email has already been registered' };
   }
 
-  if(event.joinLink){
+  if (event.joinLink) {
+    let eventDate = new Date(event.startTime);
+    eventDate = eventDate
+      .toLocaleString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      })
+      .replace(',', ' ');
+
     var mailOptions = {
       from: ClientConst.CREDENTIALS.USER,
       to: body.email,
@@ -36,16 +48,7 @@ const attendEvent = async (id, body) => {
       text: `Hi ${body.name}!
   
 Thank you for registering for ${event.name}.
-Date : - ${new Date( event.startTime)
-    .toLocaleString('en-US', {
-      month: 'short',
-      day: '2-digit',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-    })
-    .replaceAll(',', ' ')}
+Date : - ${eventDate}
 Meeting Link : - ${event.joinLink}
 We look foward to seeing you there!
   
@@ -55,7 +58,7 @@ SLIIT ${event.createdBy}.
     };
     await MailService.sendMail(mailOptions);
   }
-  
+
   attendees.push(body);
 
   body = {
