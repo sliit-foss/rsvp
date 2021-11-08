@@ -2,6 +2,8 @@ import User from './user.model';
 import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';
 import { validateAdminRequest } from '../../utils/requestValidator';
+import handlebars from 'handlebars';
+import fs from 'fs';
 
 /**
  * Create user in db
@@ -23,20 +25,22 @@ const createUser = async (req) => {
 
   const createdUser = await User.register(user, password);
 
-  var mailOptions = {
+  const html = fs.readFileSync(__dirname + '../../../../html/welcomeEmail.html', 'utf8');
+
+  var template = handlebars.compile(html);
+  var replacements = {
+    username: username,
+    userRolePrefix:role == 'Admin' ? 'an ' : 'a ',
+    userRole: role,
+    password: password,
+  };
+  var htmlToSend = template(replacements);
+
+  const mailOptions = {
     from: ClientConst.CREDENTIALS.USER,
     to: email,
     subject: 'RSVP Login Access',
-    text: `Hi ${username}!
-
-You have been assigned as ${
-      role == 'Admin' ? 'an' : 'a'
-    } ${role} to the RSVP management panel. Please use the following password to login to the website - ${password} 
-You may reset this password by visiting your account info section of the management panel
-
-Regards,
-SLIIT FOSS.
-    `,
+    html: htmlToSend,
   };
 
   const result = await MailService.sendMail(mailOptions);
