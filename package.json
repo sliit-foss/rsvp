@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run clean && npm run build-babel",
+    "build": "npm run clean && npm run build-babel && npm run copy",
     "build-babel": "babel -d ./build ./src -s",
+    "copy": "babel src --out-dir ./build --copy-files",
     "clean": "rm -rf .nyc_output build coverage && mkdir build",
     "dev": "cross-env DEBUG=dev nodemon --exec babel-node src/index.js",
     "start": "node ./build/index.js"
