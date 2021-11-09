@@ -25,14 +25,17 @@ const createUser = async (req) => {
 
   const createdUser = await User.register(user, password);
 
-  const html = fs.readFileSync(__dirname + '../../../../html/welcomeEmail.html', 'utf8');
+  const html = fs.readFileSync(__dirname + '../../../html/emailTemplate.html', 'utf8');
 
   var template = handlebars.compile(html);
   var replacements = {
+    title: 'WELCOME',
     username: username,
-    userRolePrefix:role == 'Admin' ? 'an ' : 'a ',
-    userRole: role,
-    password: password,
+    text: `You have been assigned as ${role == 'Admin' ? 'an ' : 'a '} ${role} to the RSVP management panel. Please use the following password to login to the website. 
+    You may reset this password by visiting your account info section of the management panel`,
+    boxText: password,
+    buttonURL: 'https://rsvp.sliitfoss.org/login',
+    buttonText: 'Login'
   };
   var htmlToSend = template(replacements);
 
