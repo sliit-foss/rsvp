@@ -2,6 +2,8 @@ import { validateRequest } from '../../utils/requestValidator';
 import Event from '../events/event.model';
 import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';
+import handlebars from 'handlebars';
+import fs from 'fs';
 
 /**
  *
@@ -41,20 +43,24 @@ const attendEvent = async (id, body) => {
       })
       .replace(',', ' ');
 
+    const html = fs.readFileSync(__dirname + '../../../html/emailTemplate.html', 'utf8');
+
+    var template = handlebars.compile(html);
+    var replacements = {
+      title: 'JOIN LINK',
+      username: '',
+      text: `Thank you for registering for ${event.name}. Please use the following link to join us on the scheduled date ( ${eventDate} ). We look foward to seeing you there!`,
+      boxText: event.joinLink,
+      buttonURL: event.joinLink,
+      buttonText: 'Join'
+    };
+    var htmlToSend = template(replacements);
+
     var mailOptions = {
       from: ClientConst.CREDENTIALS.USER,
       to: body.email,
       subject: `${event.name} Join Link`,
-      text: `Hi ${body.name}!
-  
-Thank you for registering for ${event.name}.
-Date : - ${eventDate}
-Meeting Link : - ${event.joinLink}
-We look foward to seeing you there!
-  
-Regards,
-SLIIT ${event.createdBy}.
-      `,
+      html: htmlToSend,
     };
     await MailService.sendMail(mailOptions);
   }

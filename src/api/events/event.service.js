@@ -8,6 +8,9 @@ import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
 import { validateRequest } from '../../utils/requestValidator';
 import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';
+import handlebars from 'handlebars';
+import fs from 'fs';
+
 
 /**
  * Create event in db
@@ -176,19 +179,23 @@ const updateEventByID = async (id, body, user) => {
     const attendees = event.attendees;
     await Promise.all(
       attendees.map(async function (attendee) {
+        const html = fs.readFileSync(__dirname + '../../../html/emailTemplate.html', 'utf8');
+
+        var template = handlebars.compile(html);
+        var replacements = {
+          title: 'UPDATED JOIN LINK',
+          username: '',
+          text: `Please note that the meeting link for ${event.name} has been updated as follows. We look foward to seeing you there!`,
+          boxText: body.joinLink,
+          buttonURL: body.joinLink,
+          buttonText: 'Join'
+        };
+        var htmlToSend = template(replacements);
         var mailOptions = {
           from: ClientConst.CREDENTIALS.USER,
           to: attendee.email,
           subject: `${event.name} - Updated Join Link`,
-          text: `Hi ${attendee.name}!
-      
-Please note that the meeting link for ${event.name} has been updated.
-Updated Meeting Link : - ${body.joinLink}
-We look foward to seeing you there!
-      
-Regards,
-SLIIT ${event.createdBy}.
-          `,
+          html: htmlToSend,
         };
         await MailService.sendMail(mailOptions);
       })
