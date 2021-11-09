@@ -19,7 +19,7 @@ export const PRIV_KEY = process.env.PRIV_KEY || 'fullterDc@';
  */
 export const DB_CONNECTION_STRING =
   process.env.DB_CONNECTION_STRING ||
-  'mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false';
+  'mongodb://root:myfoss@localhost:27017/rsvp?authSource=admin';
 
 /**
  * @constant DB_HOST hostname of database. Can be an IP or an URI.
