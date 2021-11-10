@@ -44,4 +44,6 @@ app.use(morgan('dev'));
 connect();
 initialize();
 
+global.__basedir = __dirname;
+
 export default app;

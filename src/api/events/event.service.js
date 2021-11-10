@@ -179,7 +179,7 @@ const updateEventByID = async (id, body, user) => {
     const attendees = event.attendees;
     await Promise.all(
       attendees.map(async function (attendee) {
-        const html = fs.readFileSync(__dirname + '../../../html/emailTemplate.html', 'utf8');
+        const html = fs.readFileSync(__basedir + '\\html\\emailTemplate.html', 'utf8');
 
         var template = handlebars.compile(html);
         var replacements = {

@@ -43,7 +43,7 @@ const attendEvent = async (id, body) => {
       })
       .replace(',', ' ');
 
-    const html = fs.readFileSync(__dirname + '../../../html/emailTemplate.html', 'utf8');
+    const html = fs.readFileSync(__basedir + '\\html\\emailTemplate.html', 'utf8');
 
     var template = handlebars.compile(html);
     var replacements = {
