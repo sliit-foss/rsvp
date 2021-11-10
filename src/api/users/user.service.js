@@ -25,7 +25,7 @@ const createUser = async (req) => {
   
   const createdUser = await User.register(user, password);
 
-  const html = fs.readFileSync(__basedir + '\\html\\emailTemplate.html', 'utf8');
+  const html = fs.readFileSync(__basedir + '/html/emailTemplate.html', 'utf8');
 
   var template = handlebars.compile(html);
   var replacements = {
