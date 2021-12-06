@@ -48,9 +48,12 @@ const createEvent = async (
   },
   createdBy
 ) => {
-  headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
-  speakers = await uploadSpeakerPhotos(speakers, name);
-
+  if (headerImage) {
+    headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
+  }
+  if (speakers) {
+    speakers = await uploadSpeakerPhotos(speakers, name);
+  }
   if (
     status !== EVENT_STATUS.CANCELLED &&
     status !== EVENT_STATUS.POSTPONED &&
