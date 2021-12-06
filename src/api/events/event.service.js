@@ -157,11 +157,6 @@ const updateEventByID = async (id, body, user) => {
     user,
     'You can only make changes to events published by your faculty'
   );
-  if (body.speakers && body.speakers.length == 0) {
-    throw {
-      message: 'There needs to be at least one speaker',
-    };
-  }
   const eventName = body.name
     ? body.name
     : (await Event.findById(id).select(['name'])).name;
@@ -176,7 +171,6 @@ const updateEventByID = async (id, body, user) => {
   if (body.speakers) {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
   }
-
 
   if (body.joinLink) {
     const attendees = event.attendees;
