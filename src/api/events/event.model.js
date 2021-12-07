@@ -25,7 +25,7 @@ const eventSchema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
-    headerImage: { type: String, required: true },
+    headerImage: { type: String },
     venue: { type: String, required: true },
     startTime: { type: Number, required: true },
     endTime: { type: Number, required: true },
