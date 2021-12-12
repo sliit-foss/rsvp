@@ -48,6 +48,14 @@ const createEvent = async (
   },
   createdBy
 ) => {
+  const duplicateEvents = (await Event.find({ name: name })).filter((event) => {
+    if(event.createdBy === createdBy && (event.startTime.toLocaleString().substring(0,10) === startTime.toLocaleString().substring(0,10))) {
+      return event
+    }
+  })
+  if(duplicateEvents.length > 0 ){
+    throw new Error('There already is an event taking place on the same day by your faculty');
+  }
   if (headerImage) {
     headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
   }
