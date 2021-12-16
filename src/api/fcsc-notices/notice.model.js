@@ -6,7 +6,7 @@ import { Schema, model } from 'mongoose';
  */
 
 const noticeSchema = new Schema({
-  title: { type: String, required: true },
+  title: { type: String, required: true, unique: true },
   body: { type: String, required: true },
   category: {
     type: String,
