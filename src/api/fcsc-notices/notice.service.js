@@ -1,4 +1,9 @@
 import Notice from './notice.model';
+import FCSCSubscription from '../subscription/subscription.fcsc.model';
+import MailService from '../mails/mail.service';
+import ClientConst from '../mails/mail.constants';
+import handlebars from 'handlebars';
+import fs from 'fs';
 import { validateFCSCRequest } from '../../utils/requestValidator';
 import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
 
@@ -8,7 +13,7 @@ import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
  * @returns {Promise<Document<any>>}
  */
 
-const addNotice = async (req, title, body, category, photo) => {
+const addNotice = async (req, title, body, category, photo, createdAt) => {
   validateFCSCRequest(req);
   if (photo) {
     photo = await ImageUpload(photo, `noticeBanners/${title + ' ' + category}`);
@@ -18,9 +23,42 @@ const addNotice = async (req, title, body, category, photo) => {
     body,
     category,
     photo,
+    createdAt,
   });
 
-  return notice.save();
+  const res = await notice.save();
+
+  if (res) {
+    const subscribedList = await FCSCSubscription.find();
+    await Promise.all(
+      subscribedList.map(async function (subscribedUser) {
+        const html = fs.readFileSync(
+          __basedir + '/html/emailTemplate.html',
+          'utf8'
+        );
+
+        var template = handlebars.compile(html);
+        var replacements = {
+          title: 'NOTICE',
+          text: title,
+          boxText: body,
+          buttonURL: 'https://fcsc-web.web.app/notices/',
+          buttonText: "Check out what's new",
+        };
+
+        var htmlToSend = template(replacements);
+        var mailOptions = {
+          from: ClientConst.CREDENTIALS.USER,
+          to: subscribedUser.email,
+          subject: `FCSC Notice - ${title}`,
+          html: htmlToSend,
+        };
+        await MailService.sendMail(mailOptions);
+      })
+    );
+  }
+
+  return true;
 };
 
 /**
@@ -64,7 +102,7 @@ const deleteNotice = async (req) => {
  * @returns {Promise<void>}
  */
 const getNotices = () => {
-  return Notice.find();
+  return Notice.find().sort({ createdAt: -1 });
 };
 
 export default {
