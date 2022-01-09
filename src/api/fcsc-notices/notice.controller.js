@@ -15,7 +15,8 @@ const addNotice = async (req, res) => {
       req.body.title,
       req.body.body,
       req.body.category,
-      req.body.photo
+      req.body.photo,
+      req.body.createdAt
     );
     if (!notice) {
       return res
