@@ -170,7 +170,7 @@ const updateEventByID = async (id, body, user) => {
       return e
     }
   })
-  if(duplicateEvents.length > 0 ){
+  if(duplicateEvents.length > 0 && duplicateEvents[0]._id != id){
     throw new Error('There already is an event by the same name taking place on the same day by your faculty');
   }
   const eventName = body.name
