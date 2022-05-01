@@ -1,6 +1,7 @@
 import UserService from './user.service';
 import { HTTP_STATUS } from '../../utils/http';
-import logger from '../../utils/logger';
+import { errorResponse, successResponse } from '../../utils/response';
+import asyncHandler from '../../middleware/async';
 
 /**
  *
@@ -8,22 +9,12 @@ import logger from '../../utils/logger';
  * @param res
  * @returns {Promise<void>}
  */
-const createUser = async (req, res) => {
-  try {
-    const user = await UserService.createUser(req);
-    if (!user) {
-      return res
-        .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-        .json({ error: 'Error creating user' });
-    }
-    return res.status(HTTP_STATUS.CREATED).json(user);
-  } catch (err) {
-    logger.error('user.controller.js createUser(): ' + err.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
-    });
-  }
-};
+const createUser = asyncHandler(async (req, res) => {
+  const result = await UserService.createUser(req);
+  if (!result.success)
+    return errorResponse(res, result.error, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+  return successResponse(res, 'User added successfully', result.data);
+});
 
 /**
  *
@@ -31,17 +22,10 @@ const createUser = async (req, res) => {
  * @param res
  * @returns {Promise<void>}
  */
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await UserService.getAllUsers(req);
-    return res.status(HTTP_STATUS.OK).json(users);
-  } catch (err) {
-    logger.error('user.controller.js getAllUsers(): ' + err.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
-    });
-  }
-};
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await UserService.getAllUsers(req);
+  return successResponse(res, 'Data retrieval successful', users);
+});
 
 /**
  *
@@ -49,17 +33,10 @@ const getAllUsers = async (req, res) => {
  * @param res
  * @returns {Promise<void>}
  */
-const getMyUserData = async (req, res) => {
-  try {
-    const user = await UserService.getMyUserData(req);
-    return res.status(HTTP_STATUS.OK).json(user);
-  } catch (err) {
-    logger.error('user.controller.js getMyUserData(): ' + err.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
-    });
-  }
-};
+const getMyUserData = asyncHandler(async (req, res) => {
+  const user = await UserService.getMyUserData(req);
+  return res.status(HTTP_STATUS.OK).json(user);
+});
 
 /**
  *
@@ -67,25 +44,15 @@ const getMyUserData = async (req, res) => {
  * @param res
  * @returns {Promise<*>}
  */
-const deleteUserById = async (req, res) => {
-  try {
-    const user = await UserService.deleteUserById(req);
-    if (!user) {
-      return res
-        .status(HTTP_STATUS.BAD_REQUEST)
-        .json({ error: `User not found with id:${req.params.id}` });
-    }
-
+const deleteUserById = asyncHandler(async (req, res) => {
+  const user = await UserService.deleteUserById(req);
+  if (!user) {
     return res
-      .status(HTTP_STATUS.OK)
-      .json({ message: `Sucessfully deleted user with id:${req.params.id}` });
-  } catch (err) {
-    logger.error('user.controller.js deleteUserById(): ' + err.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
-    });
+      .status(HTTP_STATUS.BAD_REQUEST)
+      .json({ error: `User not found with id:${req.params.id}` });
   }
-};
+  return successResponse(res, `Sucessfully deleted user with id:${req.params.id}`);
+});
 
 /**
  *
@@ -93,24 +60,15 @@ const deleteUserById = async (req, res) => {
  * @param res
  * @returns {Promise<*>}
  */
-const changeUserPassword = async (req, res) => {
-  try {
-    const user = await UserService.changeUserPassword(req);
-    if (!user) {
-      return res
-        .status(HTTP_STATUS.BAD_REQUEST)
-        .json({ error: `User not found with id:${req.user.id}` });
-    }
-    return res.status(HTTP_STATUS.OK).json({
-      message: `Your password has been updated successfully`,
-    });
-  } catch (err) {
-    logger.error('user.controller.js changeUserPassword(): ' + err.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
-    });
+const changeUserPassword = asyncHandler(async (req, res) => {
+  const user = await UserService.changeUserPassword(req);
+  if (!user) {
+    return res
+      .status(HTTP_STATUS.BAD_REQUEST)
+      .json({ error: `User not found with id:${req.user.id}` });
   }
-};
+  return successResponse(res, `Your password has been updated successfully`);
+});
 
 export default {
   createUser,

@@ -1,7 +1,8 @@
 import MailService from './mail.service';
 import { HTTP_STATUS } from '../../utils/http';
-import logger from '../../utils/logger';
 import ClientConst from './mail.constants';
+import asyncHandler from '../../middleware/async';
+import { errorResponse, successResponse } from '../../utils/response';
 
 /**
  *
@@ -11,79 +12,53 @@ import ClientConst from './mail.constants';
  * @return Email Response
  */
 
-const sendMail = async (req, res, next) => {
-  logger.info('mail.controller.js sendMail(): ' + req.body);
-  try {
-    const { name, email, subject, text, receiver } = req.body;
-    switch (undefined) {
-      case name:
-        throw {
-          message: 'Please specify your name',
-        };
-      case email:
-        throw {
-          message: 'Please specify your email',
-        };
-      case subject:
-        throw {
-          message: 'Please specify a subject',
-        };
-      case text:
-        throw {
-          message: 'Please specify a message body',
-        };
-    }
-    var mailOptions = {
-      from: ClientConst.CREDENTIALS.USER,
-      to: receiver,
-      subject: subject,
-      text: `Sender email - ${email}
+const sendMail = asyncHandler(async (req, res, next) => {
+  const { name, email, subject, text, receiver } = req.body;
+  switch (undefined) {
+    case name:
+      throw {
+        message: 'Please specify your name',
+      };
+    case email:
+      throw {
+        message: 'Please specify your email',
+      };
+    case subject:
+      throw {
+        message: 'Please specify a subject',
+      };
+    case text:
+      throw {
+        message: 'Please specify a message body',
+      };
+  }
+  var mailOptions = {
+    from: ClientConst.CREDENTIALS.USER,
+    to: receiver,
+    subject: subject,
+    text: `Sender email - ${email}
 Sender name - ${name}
 
 Message - ${text}`,
-    };
+  };
 
-    const result = await MailService.sendMail(mailOptions);
-    if (result) {
-      logger.info('Message sent');
-      return res.status(HTTP_STATUS.OK).json({ success: true });
-    } else {
-      logger.error('mail.controller.js ExecuteMail()');
-      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        error: 'Message could not be sent',
-      });
-    }
-  } catch (err) {
-    logger.error('mail.controller.js sendMail(): ' + err.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      error: err.message,
-    });
-  }
-};
-
-const checkAvailability = async (req, res, next) => {
   try {
-    const result = await MailService.checkAvailability();
-    if (result) {
-      return res.status(HTTP_STATUS.OK).json({
-        available: true,
-        message: 'Server is ready to take your messages',
-      });
-    } else {
-      return res.status(HTTP_STATUS.OK).json({
-        available: false,
-        message: `Server is not ready`,
-      });
-    }
-  } catch (error) {
-    logger.error('mail.controller.js checkAvailability(): ' + error.message);
-    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-      available: false,
-      error: `Server is not ready - ${error.message}`,
-    });
+    await MailService.sendMail(mailOptions)
+    return successResponse(res, 'Message Sent Successfully');
+  } catch (err) {
+    return errorResponse(res, err, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
-};
+
+});
+
+const checkAvailability = asyncHandler(async (req, res, next) => {
+  try {
+    await MailService.checkAvailability();
+    return successResponse(res, 'Server is ready to take your messages');
+  } catch (err) {
+    return errorResponse(res, 'Server is not ready to take your messages', HTTP_STATUS.INTERNAL_SERVER_ERROR);
+  }
+});
 
 export default {
   sendMail,

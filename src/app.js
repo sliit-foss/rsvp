@@ -14,6 +14,8 @@ import createMemoryStore from 'memorystore';
 const MemoryStore = createMemoryStore(session);
 const app = express();
 
+console.log(SESSION_SECRET)
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: false }));
 

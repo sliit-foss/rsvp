@@ -1,4 +1,4 @@
-import { validateRequest } from '../../utils/requestValidator';
+import { validateRequest } from '../../middleware/requestValidator';
 import Event from '../events/event.model';
 import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';

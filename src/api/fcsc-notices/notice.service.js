@@ -4,7 +4,7 @@ import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';
 import handlebars from 'handlebars';
 import fs from 'fs';
-import { validateFCSCRequest } from '../../utils/requestValidator';
+import { validateFCSCRequest } from '../../middleware/requestValidator';
 import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
 
 /**

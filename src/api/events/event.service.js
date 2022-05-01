@@ -5,11 +5,12 @@ import {
   uploadSpeakerPhotos,
 } from './event.constants';
 import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
-import { validateRequest } from '../../utils/requestValidator';
+import { validateRequest } from '../../middleware/requestValidator';
 import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';
 import handlebars from 'handlebars';
 import fs from 'fs';
+import logger from '../../utils/logger';
 
 
 /**
@@ -242,10 +243,10 @@ const deleteEventById = async (id, user) => {
           await ImageDelete(speaker.photo);
         });
       } catch (error) {
-        console.log(error);
+        logger.error(err);
       }
     } else {
-      console.log(err);
+      logger.error(err);
     }
     event.remove();
   });

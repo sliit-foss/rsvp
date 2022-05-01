@@ -1,7 +1,7 @@
 import User from './user.model';
 import MailService from '../mails/mail.service';
 import ClientConst from '../mails/mail.constants';
-import { validateAdminRequest } from '../../utils/requestValidator';
+import { validateAdminRequest } from '../../middleware/requestValidator';
 import handlebars from 'handlebars';
 import fs from 'fs';
 
@@ -12,7 +12,7 @@ import fs from 'fs';
  */
 
 const createUser = async (req) => {
-  validateAdminRequest(req);
+  // validateAdminRequest(req);
   const { username, email, role, faculty } = req.body;
   const password = Math.random().toString(36).slice(-8);
 
@@ -22,7 +22,7 @@ const createUser = async (req) => {
     role,
     faculty,
   });
-  
+
   const createdUser = await User.register(user, password);
 
   const html = fs.readFileSync(__basedir + '/html/emailTemplate.html', 'utf8');
@@ -45,12 +45,18 @@ const createUser = async (req) => {
     subject: 'RSVP Login Access',
     html: htmlToSend,
   };
-
-  const result = await MailService.sendMail(mailOptions);
-  if (result) {
-    return createdUser;
-  } else {
+  try {
+    await MailService.sendMail(mailOptions)
+    return {
+      success: true,
+      data: createdUser,
+    }
+  } catch (err) {
     await User.findByIdAndDelete(createdUser._id);
+    return {
+      success: false,
+      error: err,
+    }
   }
 };
 
@@ -98,7 +104,6 @@ const changeUserPassword = async (req) => {
       message: 'Please specify a new user password',
     };
   }
-
   const user = await User.findById(req.user.id);
   const updatedUser = await user.setPassword(newPassword);
   await user.save();

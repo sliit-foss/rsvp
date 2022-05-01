@@ -1,4 +1,4 @@
-import { ERROR_RESPONSE } from './errorResponse';
+import { ERROR_RESPONSE } from '../utils/response';
 
 /**
  * @function validateAdminRequest validates whether the request is coming from an Admin

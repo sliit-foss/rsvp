@@ -8,8 +8,8 @@
     "build-babel": "babel -d ./build ./src -s",
     "copy": "babel src --out-dir ./build --copy-files",
     "clean": "rm -rf .nyc_output build coverage && mkdir build",
-    "dev": "cross-env DEBUG=dev nodemon --exec babel-node src/index.js",
-    "start": "node ./build/index.js"
+    "dev": "cross-env DEBUG=dev nodemon -r dotenv/config --exec babel-node src/index.js",
+    "start": "-r dotenv/config node ./build/index.js"
   },
   "husky": {
     "hooks": {
@@ -40,18 +40,19 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "debug": "^4.3.1",
-    "dotenv": "^8.2.0",
+    "dotenv": "^16.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "firebase-admin": "^9.11.0",
     "handlebars": "^4.7.7",
     "husky": "^5.1.3",
+    "install": "^0.13.0",
     "jsonwebtoken": "^8.5.1",
     "memorystore": "^1.6.6",
     "mongoose": "^5.11.7",
     "mongoose-data-seed": "^2.1.6",
     "morgan": "^1.10.0",
-    "nodemailer": "^6.5.0",
+    "nodemailer": "^6.7.4",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
