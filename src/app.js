@@ -10,6 +10,7 @@ import User from './api/users/user.model';
 import LocalStrategy from 'passport-local';
 import morgan from 'morgan';
 import createMemoryStore from 'memorystore';
+import serverless from 'serverless-http';
 
 const MemoryStore = createMemoryStore(session);
 const app = express();
@@ -49,3 +50,4 @@ initialize();
 global.__basedir = __dirname;
 
 export default app;
+export const handler = serverless(app);
