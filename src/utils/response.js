@@ -9,11 +9,12 @@ export const ERROR_RESPONSE = {
   UNAUTHORIZED: 'You are not authorized to access this endpoint',
 };
 
-export const successResponse = (res, message, data = {}, status = HTTP_STATUS.OK) => {
-  return res.status(status).json({ success: true, message, data })
-}
-
-export const errorResponse = (res, error, status = HTTP_STATUS.INTERNAL_SERVER_ERROR) => {
-  logger.error(error);
-  return res.status(status).json({ success: false, error: error.message || error, stack: NODE_ENV !== 'production' ? error.stack : null })
+export const makeResponse = ({ res, success = true, message, data = {}, status }) => {
+  if (!success) {
+    logger.error(message);
+    status = status || HTTP_STATUS.INTERNAL_SERVER_ERROR;
+  } else {
+    status = status || HTTP_STATUS.OK;
+  }
+  return res.status(status).json({ success: false, message: message.message || message, data: data, stack: NODE_ENV !== 'production' ? error.stack : null })
 }

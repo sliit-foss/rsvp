@@ -1,6 +1,6 @@
 import AttendeeService from './attendee.service';
 import { HTTP_STATUS } from '../../utils/http';
-import { errorResponse, successResponse } from '../../utils/response';
+import { makeResponse } from '../../utils/response';
 import asyncHandler from '../../middleware/async';
 
 /**
@@ -10,9 +10,9 @@ import asyncHandler from '../../middleware/async';
  * @returns {Promise<*>}
  */
 const attendEvent = asyncHandler(async (req, res) => {
-    const event = await AttendeeService.attendEvent(req.params.id, req.body);
-    if (!event) return errorResponse(res, `Event not found with id:${req.params.id}`, HTTP_STATUS.BAD_REQUEST);
-    return successResponse(res, `Sucessfully registered to event with id:${req.params.id}`);
+  const event = await AttendeeService.attendEvent(req.params.id, req.body);
+  if (!event) return makeResponse({ res, success: false, message: `Event not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  return makeResponse({ res, message: `Sucessfully registered to event with id:${req.params.id}` });
 });
 
 /**
@@ -22,11 +22,11 @@ const attendEvent = asyncHandler(async (req, res) => {
  * @returns {Promise<*>}
  */
 const getAttendees = asyncHandler(async (req, res) => {
-    const attendees = await AttendeeService.getAttendees(
-      req.params.id,
-      req.user
-    );
-    return successResponse(res, 'Data retrieval successful', attendees || []);
+  const attendees = await AttendeeService.getAttendees(
+    req.params.id,
+    req.user
+  );
+  return makeResponse({ res, message: 'Data retrieval successful', data: attendees || [] });
 });
 
 export default {

@@ -1,7 +1,7 @@
 import MailService from './mail.service';
 import ClientConst from './mail.constants';
 import asyncHandler from '../../middleware/async';
-import { successResponse } from '../../utils/response';
+import { makeResponse } from '../../utils/response';
 
 /**
  *
@@ -42,12 +42,12 @@ Message - ${text}`,
   };
 
   await MailService.sendMail(mailOptions);
-  return successResponse(res, 'Message Sent Successfully');
+  return makeResponse({ res, message: 'Message Sent Successfully' });
 });
 
 const checkAvailability = asyncHandler(async (req, res, next) => {
   await MailService.checkAvailability();
-  return successResponse(res, 'Server is ready to take your messages');
+  return makeResponse({ res, message: 'Server is ready to take your messages' });
 });
 
 export default {

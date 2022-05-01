@@ -1,20 +1,22 @@
 import AuthService from './auth.service';
 import { HTTP_STATUS } from '../../utils/http';
 import passport from 'passport';
-import { errorResponse, successResponse } from '../../utils/response';
+import { makeResponse } from '../../utils/response';
 import asyncHandler from '../../middleware/async';
 
 const userLogin = asyncHandler(async (req, res, next) => {
-  passport.authenticate('local', function (err, user) {
-    if (err) return errorResponse(res, err, HTTP_STATUS.INTERNAL_SERVER_ERROR);
-    if (!user) return errorResponse(res, 'Invalid username or password', HTTP_STATUS.UNAUTHORIZED);
+  passport.authenticate('local', (err, user) => {
+    if (err) return makeResponse({ res, success: false, message: err });
+    if (!user) return makeResponse({ res, success: false, message: 'Invalid username or password', status: HTTP_STATUS.UNAUTHORIZED });
     const tokenObject = AuthService.issueJWT(user);
-    return successResponse(res, 'Login successful', {
-      message: 'Authentication successful',
-      token: tokenObject.token,
-      expiresIn: tokenObject.expires,
-      userRole: user.role,
-      faculty: user.faculty
+    return makeResponse({
+      res, message: 'Login successful', data: {
+        message: 'Authentication successful',
+        token: tokenObject.token,
+        expiresIn: tokenObject.expires,
+        userRole: user.role,
+        faculty: user.faculty
+      }
     });
   })(req, res, next);
 });

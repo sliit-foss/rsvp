@@ -50,11 +50,11 @@ const createEvent = async (
   createdBy
 ) => {
   const duplicateEvents = (await Event.find({ name: name })).filter((event) => {
-    if(event.createdBy === createdBy && (new Date(event.startTime).toLocaleString().substring(0,10) === new Date(startTime).toLocaleString().substring(0,10))) {
+    if (event.createdBy === createdBy && (new Date(event.startTime).toLocaleString().substring(0, 10) === new Date(startTime).toLocaleString().substring(0, 10))) {
       return event
     }
   })
-  if(duplicateEvents.length > 0 ){
+  if (duplicateEvents.length > 0) {
     throw new Error('There already is an event by the same name taking place on the same day by your faculty');
   }
   if (headerImage) {
@@ -167,11 +167,11 @@ const updateEventByID = async (id, body, user) => {
     'You can only make changes to events published by your faculty'
   );
   const duplicateEvents = (await Event.find({ name: body.name || event.name })).filter((e) => {
-    if(e.createdBy === (body.createdBy || event.createdBy ) && (new Date(e.startTime).toLocaleString().substring(0,10) === ((body.startTime? new Date(body.startTime).toLocaleString().substring(0,10) : undefined) || new Date(event.startTime).toLocaleString().substring(0,10)))) {
+    if (e.createdBy === (body.createdBy || event.createdBy) && (new Date(e.startTime).toLocaleString().substring(0, 10) === ((body.startTime ? new Date(body.startTime).toLocaleString().substring(0, 10) : undefined) || new Date(event.startTime).toLocaleString().substring(0, 10)))) {
       return e
     }
   })
-  if(duplicateEvents.length > 0 && duplicateEvents[0]._id != id){
+  if (duplicateEvents.length > 0 && duplicateEvents[0]._id != id) {
     throw new Error('There already is an event by the same name taking place on the same day by your faculty');
   }
   const eventName = body.name

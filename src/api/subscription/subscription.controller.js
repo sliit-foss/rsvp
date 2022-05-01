@@ -1,7 +1,7 @@
 import SubscriptionService from './subscription.service';
 import { HTTP_STATUS } from '../../utils/http';
 import asyncHandler from '../../middleware/async';
-import { errorResponse, successResponse } from '../../utils/response';
+import { makeResponse } from '../../utils/response';
 
 /**
  *
@@ -11,8 +11,8 @@ import { errorResponse, successResponse } from '../../utils/response';
  */
 const subscribeFCSC = asyncHandler(async (req, res) => {
   const subscription = await SubscriptionService.subscribeFCSC(req);
-  if (!subscription) return errorResponse(res, `Couldn't subscribe to FCSC Notices`, HTTP_STATUS.BAD_REQUEST);
-  return successResponse(res, `Subscribed to FCSC successfully`);
+  if (!subscription) return makeResponse({ res, success: false, message: `Couldn't subscribe to FCSC Notices`, status: HTTP_STATUS.BAD_REQUEST });
+  return makeResponse({ res, message: `Subscribed to FCSC successfully` });
 });
 
 /**
@@ -23,8 +23,8 @@ const subscribeFCSC = asyncHandler(async (req, res) => {
  */
 const subscribeRSVP = asyncHandler(async (req, res) => {
   const subscription = await SubscriptionService.subscribeRSVP(req);
-  if (!subscription) return errorResponse(res, `Couldn't subscribe to RSVP`, HTTP_STATUS.INTERNAL_SERVER_ERROR);
-  return successResponse(res, `Subscribed to RSVP successfully`);
+  if (!subscription) return makeResponse({ res, success: false, message: `Couldn't subscribe to RSVP` });
+  return makeResponse({ res, message: `Subscribed to RSVP successfully` });
 });
 
 export default {

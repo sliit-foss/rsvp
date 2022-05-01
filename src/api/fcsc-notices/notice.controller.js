@@ -1,7 +1,7 @@
 import NoticeService from './notice.service';
 import { HTTP_STATUS } from '../../utils/http';
 import asyncHandler from '../../middleware/async';
-import { errorResponse, successResponse } from '../../utils/response';
+import { makeResponse } from '../../utils/response';
 
 /**
  *
@@ -18,8 +18,8 @@ const addNotice = asyncHandler(async (req, res) => {
     req.body.photo,
     req.body.createdAt
   );
-  if (!notice) return errorResponse(res, 'Error adding notice', HTTP_STATUS.INTERNAL_SERVER_ERROR);
-  return successResponse(res, `Notice added successfully`, notice);
+  if (!notice) return makeResponse({ res, success: false, message: 'Error adding notice' });
+  return makeResponse({ res, message: `Notice added successfully`, data: notice });
 });
 
 /**
@@ -30,8 +30,8 @@ const addNotice = asyncHandler(async (req, res) => {
  */
 const editNotice = asyncHandler(async (req, res) => {
   const notice = await NoticeService.editNotice(req);
-  if (!notice) return errorResponse(res, `Notice not found with id:${req.params.id}`, HTTP_STATUS.BAD_REQUEST);
-  return successResponse(res, `Successfully edited notice with id ${req.params.id}`);
+  if (!notice) return makeResponse({ res, success: false, message: `Notice not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  return makeResponse({ res, message: `Successfully edited notice with id ${req.params.id}` });
 });
 
 /**
@@ -42,8 +42,8 @@ const editNotice = asyncHandler(async (req, res) => {
  */
 const deleteNotice = asyncHandler(async (req, res) => {
   const notice = await NoticeService.deleteNotice(req);
-  if (!notice) return errorResponse(res, `Notice not found with id:${req.params.id}`, HTTP_STATUS.BAD_REQUEST);
-  return successResponse(res, `Sucessfully deleted notice with id:${req.params.id}`);
+  if (!notice) return makeResponse({ res, success: false, message: `Notice not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  return makeResponse({ res, message: `Sucessfully deleted notice with id:${req.params.id}` });
 });
 
 /**
@@ -54,7 +54,7 @@ const deleteNotice = asyncHandler(async (req, res) => {
  */
 const getNotices = asyncHandler(async (req, res) => {
   const notices = await NoticeService.getNotices();
-  return successResponse(res, `Data retrieval successful`, notices || []);
+  return makeResponse({ res, message: `Data retrieval successful`, data: notices || [] });
 });
 
 export default {

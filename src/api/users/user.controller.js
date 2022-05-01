@@ -1,6 +1,6 @@
 import UserService from './user.service';
 import { HTTP_STATUS } from '../../utils/http';
-import { errorResponse, successResponse } from '../../utils/response';
+import { makeResponse } from '../../utils/response';
 import asyncHandler from '../../middleware/async';
 
 /**
@@ -11,8 +11,8 @@ import asyncHandler from '../../middleware/async';
  */
 const createUser = asyncHandler(async (req, res) => {
   const result = await UserService.createUser(req);
-  if (!result.success) return errorResponse(res, result.error, HTTP_STATUS.INTERNAL_SERVER_ERROR);
-  return successResponse(res, 'User added successfully', result.data);
+  if (!result.success) return makeResponse({ res, success: false, message: result.error });
+  return makeResponse({ res, message: 'User added successfully', data: result.data });
 });
 
 /**
@@ -23,7 +23,7 @@ const createUser = asyncHandler(async (req, res) => {
  */
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await UserService.getAllUsers(req);
-  return successResponse(res, 'Data retrieval successful', users || []);
+  return makeResponse({ res, message: 'Data retrieval successful', data: users || [] });
 });
 
 /**
@@ -34,7 +34,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
  */
 const getMyUserData = asyncHandler(async (req, res) => {
   const user = await UserService.getMyUserData(req);
-  return successResponse(res, 'Data retrieval successful', user);
+  return makeResponse({ res, message: 'Data retrieval successful', data: user });
 });
 
 /**
@@ -45,8 +45,8 @@ const getMyUserData = asyncHandler(async (req, res) => {
  */
 const deleteUserById = asyncHandler(async (req, res) => {
   const user = await UserService.deleteUserById(req);
-  if (!user) errorResponse(res, `User not found with id:${req.params.id}`, HTTP_STATUS.BAD_REQUEST);
-  return successResponse(res, `Sucessfully deleted user with id:${req.params.id}`);
+  if (!user) makeResponse({ res, success: false, message: `User not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  return makeResponse({ res, message: `Sucessfully deleted user with id:${req.params.id}` });
 });
 
 /**
@@ -57,8 +57,8 @@ const deleteUserById = asyncHandler(async (req, res) => {
  */
 const changeUserPassword = asyncHandler(async (req, res) => {
   const user = await UserService.changeUserPassword(req);
-  if (!user) return errorResponse(res, `User not found with id:${req.user.id}`, HTTP_STATUS.BAD_REQUEST);
-  return successResponse(res, `Your password has been updated successfully`);
+  if (!user) return makeResponse({ res, success: false, message: `User not found with id:${req.user.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  return makeResponse({ res, message: `Your password has been updated successfully` });
 });
 
 export default {
