@@ -10,12 +10,9 @@ import User from './api/users/user.model';
 import LocalStrategy from 'passport-local';
 import morgan from 'morgan';
 import createMemoryStore from 'memorystore';
-import serverless from 'serverless-http';
 
 const MemoryStore = createMemoryStore(session);
 const app = express();
-
-console.log(SESSION_SECRET)
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: false }));
@@ -50,4 +47,3 @@ initialize();
 global.__basedir = __dirname;
 
 export default app;
-export const handler = serverless(app);
