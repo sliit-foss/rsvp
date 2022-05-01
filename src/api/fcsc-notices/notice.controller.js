@@ -54,7 +54,7 @@ const deleteNotice = asyncHandler(async (req, res) => {
  */
 const getNotices = asyncHandler(async (req, res) => {
   const notices = await NoticeService.getNotices();
-  return successResponse(res, `Data retrieval successful`, notices);
+  return successResponse(res, `Data retrieval successful`, notices || []);
 });
 
 export default {

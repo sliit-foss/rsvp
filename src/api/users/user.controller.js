@@ -11,8 +11,7 @@ import asyncHandler from '../../middleware/async';
  */
 const createUser = asyncHandler(async (req, res) => {
   const result = await UserService.createUser(req);
-  if (!result.success)
-    return errorResponse(res, result.error, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+  if (!result.success) return errorResponse(res, result.error, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   return successResponse(res, 'User added successfully', result.data);
 });
 
@@ -24,7 +23,7 @@ const createUser = asyncHandler(async (req, res) => {
  */
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await UserService.getAllUsers(req);
-  return successResponse(res, 'Data retrieval successful', users);
+  return successResponse(res, 'Data retrieval successful', users || []);
 });
 
 /**
@@ -35,7 +34,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
  */
 const getMyUserData = asyncHandler(async (req, res) => {
   const user = await UserService.getMyUserData(req);
-  return res.status(HTTP_STATUS.OK).json(user);
+  return successResponse(res, 'Data retrieval successful', user);
 });
 
 /**
@@ -46,11 +45,7 @@ const getMyUserData = asyncHandler(async (req, res) => {
  */
 const deleteUserById = asyncHandler(async (req, res) => {
   const user = await UserService.deleteUserById(req);
-  if (!user) {
-    return res
-      .status(HTTP_STATUS.BAD_REQUEST)
-      .json({ error: `User not found with id:${req.params.id}` });
-  }
+  if (!user) errorResponse(res, `User not found with id:${req.params.id}`, HTTP_STATUS.BAD_REQUEST);
   return successResponse(res, `Sucessfully deleted user with id:${req.params.id}`);
 });
 
@@ -62,11 +57,7 @@ const deleteUserById = asyncHandler(async (req, res) => {
  */
 const changeUserPassword = asyncHandler(async (req, res) => {
   const user = await UserService.changeUserPassword(req);
-  if (!user) {
-    return res
-      .status(HTTP_STATUS.BAD_REQUEST)
-      .json({ error: `User not found with id:${req.user.id}` });
-  }
+  if (!user) return errorResponse(res, `User not found with id:${req.user.id}`, HTTP_STATUS.BAD_REQUEST);
   return successResponse(res, `Your password has been updated successfully`);
 });
 

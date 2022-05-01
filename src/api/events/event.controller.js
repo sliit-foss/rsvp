@@ -37,7 +37,7 @@ const getAllEvents = asyncHandler(async (req, res) => {
     req.query.page,
     req.params.club,
   );
-  return successResponse(res, 'Data retrieval successful', events);
+  return successResponse(res, 'Data retrieval successful', events || []);
 });
 
 /**
@@ -48,7 +48,7 @@ const getAllEvents = asyncHandler(async (req, res) => {
  */
 const getLatestEvents = asyncHandler(async (req, res) => {
   const events = await EventService.getLatestEvents(req.params.club);
-  return successResponse(res, 'Data retrieval successful', events);
+  return successResponse(res, 'Data retrieval successful', events || []);
 });
 
 /**

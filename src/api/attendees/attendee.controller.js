@@ -26,7 +26,7 @@ const getAttendees = asyncHandler(async (req, res) => {
       req.params.id,
       req.user
     );
-    return successResponse(res, 'Data retrieval successful', attendees);
+    return successResponse(res, 'Data retrieval successful', attendees || []);
 });
 
 export default {
