@@ -1,8 +1,7 @@
 import MailService from './mail.service';
-import { HTTP_STATUS } from '../../utils/http';
 import ClientConst from './mail.constants';
 import asyncHandler from '../../middleware/async';
-import { errorResponse, successResponse } from '../../utils/response';
+import { successResponse } from '../../utils/response';
 
 /**
  *
@@ -42,22 +41,13 @@ Sender name - ${name}
 Message - ${text}`,
   };
 
-  try {
-    await MailService.sendMail(mailOptions)
-    return successResponse(res, 'Message Sent Successfully');
-  } catch (err) {
-    return errorResponse(res, err, HTTP_STATUS.INTERNAL_SERVER_ERROR);
-  }
-
+  await MailService.sendMail(mailOptions);
+  return successResponse(res, 'Message Sent Successfully');
 });
 
 const checkAvailability = asyncHandler(async (req, res, next) => {
-  try {
-    await MailService.checkAvailability();
-    return successResponse(res, 'Server is ready to take your messages');
-  } catch (err) {
-    return errorResponse(res, 'Server is not ready to take your messages', HTTP_STATUS.INTERNAL_SERVER_ERROR);
-  }
+  await MailService.checkAvailability();
+  return successResponse(res, 'Server is ready to take your messages');
 });
 
 export default {
