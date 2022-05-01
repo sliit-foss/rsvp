@@ -2,7 +2,7 @@ import FCSCSubscription from './subscription.fcsc.model';
 import RSVPSubscription from './subscription.rsvp.model';
 
 /**
- * Create fscs subscription in db
+ * Create fcsc subscription in db
  * @param req
  * @returns {Promise<Document<any>>}
  */
@@ -16,7 +16,7 @@ const subscribeFCSC = async (req) => {
 };
 
 /**
- * Create fscs subscription in db
+ * Create rsvp subscription in db
  * @param req
  * @returns {Promise<Document<any>>}
  */

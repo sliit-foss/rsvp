@@ -1,4 +1,13 @@
-import { ERROR_RESPONSE } from '../utils/response';
+import { ERROR_RESPONSE, makeResponse } from '../utils/response';
+
+/**
+ * @function joiValidator validates request against a provided joi schema
+ */
+ const joiValidator = schema => (req, res, next) => {
+  const validation = schema.validate(req.body)
+  if(validation.error) return makeResponse({ res, success: false, message: validation.error });
+  next()
+};
 
 /**
  * @function validateAdminRequest validates whether the request is coming from an Admin
@@ -29,4 +38,4 @@ const validateFCSCRequest = (req) => {
   }
 };
 
-export { validateAdminRequest, validateRequest, validateFCSCRequest };
+export { joiValidator, validateAdminRequest, validateRequest, validateFCSCRequest };

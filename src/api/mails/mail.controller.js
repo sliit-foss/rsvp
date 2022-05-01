@@ -13,24 +13,6 @@ import { makeResponse } from '../../utils/response';
 
 const sendMail = asyncHandler(async (req, res, next) => {
   const { name, email, subject, text, receiver } = req.body;
-  switch (undefined) {
-    case name:
-      throw {
-        message: 'Please specify your name',
-      };
-    case email:
-      throw {
-        message: 'Please specify your email',
-      };
-    case subject:
-      throw {
-        message: 'Please specify a subject',
-      };
-    case text:
-      throw {
-        message: 'Please specify a message body',
-      };
-  }
   var mailOptions = {
     from: ClientConst.CREDENTIALS.USER,
     to: receiver,
