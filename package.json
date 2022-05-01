@@ -9,7 +9,8 @@
     "copy": "babel src --out-dir ./build --copy-files",
     "clean": "rm -rf .nyc_output build coverage && mkdir build",
     "dev": "cross-env DEBUG=dev nodemon -r dotenv/config --exec babel-node src/index.js",
-    "start": "-r dotenv/config node ./build/index.js"
+    "start": "-r dotenv/config node ./build/index.js",
+    "test": "node ./test/e2e/index.js"
   },
   "husky": {
     "hooks": {
