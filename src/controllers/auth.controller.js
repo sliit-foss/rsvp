@@ -1,8 +1,8 @@
-import AuthService from './auth.service';
-import { HTTP_STATUS } from '../../utils/http';
 import passport from 'passport';
-import { makeResponse } from '../../utils/response';
-import asyncHandler from '../../middleware/async';
+import AuthService from '../services/auth.service';
+import { HTTP_STATUS } from '../utils/http';
+import { makeResponse } from '../utils/response';
+import asyncHandler from '../middleware/async';
 
 const userLogin = asyncHandler(async (req, res, next) => {
   passport.authenticate('local', (err, user) => {

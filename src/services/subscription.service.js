@@ -1,5 +1,5 @@
-import FCSCSubscription from './subscription.fcsc.model';
-import RSVPSubscription from './subscription.rsvp.model';
+import FCSCSubscription from '../models/subscription.fcsc.model';
+import RSVPSubscription from '../models/subscription.rsvp.model';
 
 /**
  * Create fcsc subscription in db

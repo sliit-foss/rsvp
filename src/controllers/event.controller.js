@@ -1,7 +1,7 @@
-import EventService from './event.service';
-import { HTTP_STATUS } from '../../utils/http';
-import { makeResponse } from '../../utils/response';
-import asyncHandler from '../../middleware/async';
+import EventService from '../services/event.service';
+import { HTTP_STATUS } from '../utils/http';
+import { makeResponse } from '../utils/response';
+import asyncHandler from '../middleware/async';
 
 /**
  *
@@ -22,6 +22,7 @@ const createEvent = asyncHandler(async (req, res) => {
  */
 const getEventById = asyncHandler(async (req, res) => {
   const event = await EventService.getEventById(req.params.id);
+  if(!event) return makeResponse({ res, success: false, message: `Event not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
   return makeResponse({ res, message: 'Data retrieval successful', data: event });
 });
 

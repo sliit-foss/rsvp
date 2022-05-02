@@ -1,7 +1,7 @@
-import UserService from './user.service';
-import { HTTP_STATUS } from '../../utils/http';
-import { makeResponse } from '../../utils/response';
-import asyncHandler from '../../middleware/async';
+import UserService from '../services/user.service';
+import { HTTP_STATUS } from '../utils/http';
+import { makeResponse } from '../utils/response';
+import asyncHandler from '../middleware/async';
 
 /**
  *

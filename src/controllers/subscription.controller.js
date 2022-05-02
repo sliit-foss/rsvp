@@ -1,7 +1,7 @@
-import SubscriptionService from './subscription.service';
-import { HTTP_STATUS } from '../../utils/http';
-import asyncHandler from '../../middleware/async';
-import { makeResponse } from '../../utils/response';
+import SubscriptionService from '../services/subscription.service';
+import { HTTP_STATUS } from '../utils/http';
+import asyncHandler from '../middleware/async';
+import { makeResponse } from '../utils/response';
 
 /**
  *

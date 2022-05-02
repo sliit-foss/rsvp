@@ -1,6 +1,6 @@
-import User from '../users/user.model';
+import User from '../models/user.model';
 import jsonwebtoken from 'jsonwebtoken';
-import { PRIV_KEY } from '../../config';
+import { PRIV_KEY } from '../config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import passport from 'passport';
 

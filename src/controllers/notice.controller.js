@@ -1,7 +1,7 @@
-import NoticeService from './notice.service';
-import { HTTP_STATUS } from '../../utils/http';
-import asyncHandler from '../../middleware/async';
-import { makeResponse } from '../../utils/response';
+import NoticeService from '../services/notice.service';
+import asyncHandler from '../middleware/async';
+import { HTTP_STATUS } from '../utils/http';
+import { makeResponse } from '../utils/response';
 
 /**
  *

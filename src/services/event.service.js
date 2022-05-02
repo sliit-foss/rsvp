@@ -1,17 +1,12 @@
-import Event from './event.model';
-import {
-  EVENT_STATUS,
-  getEventStatus,
-  uploadSpeakerPhotos,
-} from './event.constants';
-import { ImageUpload, ImageDelete } from '../../middleware/firebaseStorage';
-import { validateRequest } from '../../middleware/requestValidator';
-import MailService from '../mails/mail.service';
-import ClientConst from '../mails/mail.constants';
-import handlebars from 'handlebars';
 import fs from 'fs';
-import logger from '../../utils/logger';
-
+import Event from '../models/event.model';
+import { EVENT_STATUS } from '../constants/event.constants';
+import { ImageUpload, ImageDelete } from '../middleware/firebaseStorage';
+import { validateRequest } from '../middleware/requestValidator';
+import MailService from './mail.service';
+import ClientConst from '../constants/mail.constants';
+import handlebars from 'handlebars';
+import logger from '../utils/logger';
 
 /**
  * Create event in db
@@ -50,12 +45,18 @@ const createEvent = async (
   createdBy
 ) => {
   const duplicateEvents = (await Event.find({ name: name })).filter((event) => {
-    if (event.createdBy === createdBy && (new Date(event.startTime).toLocaleString().substring(0, 10) === new Date(startTime).toLocaleString().substring(0, 10))) {
-      return event
+    if (
+      event.createdBy === createdBy &&
+      new Date(event.startTime).toLocaleString().substring(0, 10) ===
+        new Date(startTime).toLocaleString().substring(0, 10)
+    ) {
+      return event;
     }
-  })
+  });
   if (duplicateEvents.length > 0) {
-    throw new Error('There already is an event by the same name taking place on the same day by your faculty');
+    throw new Error(
+      'There already is an event by the same name taking place on the same day by your faculty'
+    );
   }
   if (headerImage) {
     headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
@@ -141,7 +142,9 @@ const getLatestEvents = async (club) => {
     .limit(3);
 
   if (!results.length) {
-    const event = await Event.findOne(club == 'fcsc' ? { createdBy: 'FCSC' } : {})
+    const event = await Event.findOne(
+      club == 'fcsc' ? { createdBy: 'FCSC' } : {}
+    )
       .sort({ startTime: -1 })
       .select(['-attendees', '-speakers']);
     if (event) {
@@ -166,13 +169,24 @@ const updateEventByID = async (id, body, user) => {
     user,
     'You can only make changes to events published by your faculty'
   );
-  const duplicateEvents = (await Event.find({ name: body.name || event.name })).filter((e) => {
-    if (e.createdBy === (body.createdBy || event.createdBy) && (new Date(e.startTime).toLocaleString().substring(0, 10) === ((body.startTime ? new Date(body.startTime).toLocaleString().substring(0, 10) : undefined) || new Date(event.startTime).toLocaleString().substring(0, 10)))) {
-      return e
+  const duplicateEvents = (
+    await Event.find({ name: body.name || event.name })
+  ).filter((e) => {
+    if (
+      e.createdBy === (body.createdBy || event.createdBy) &&
+      new Date(e.startTime).toLocaleString().substring(0, 10) ===
+        ((body.startTime
+          ? new Date(body.startTime).toLocaleString().substring(0, 10)
+          : undefined) ||
+          new Date(event.startTime).toLocaleString().substring(0, 10))
+    ) {
+      return e;
     }
-  })
+  });
   if (duplicateEvents.length > 0 && duplicateEvents[0]._id != id) {
-    throw new Error('There already is an event by the same name taking place on the same day by your faculty');
+    throw new Error(
+      'There already is an event by the same name taking place on the same day by your faculty'
+    );
   }
   const eventName = body.name
     ? body.name
@@ -193,7 +207,10 @@ const updateEventByID = async (id, body, user) => {
     const attendees = event.attendees;
     await Promise.all(
       attendees.map(async function (attendee) {
-        const html = fs.readFileSync(__basedir + '/html/emailTemplate.html', 'utf8');
+        const html = fs.readFileSync(
+          __basedir + '/html/emailTemplate.html',
+          'utf8'
+        );
 
         var template = handlebars.compile(html);
         var replacements = {
@@ -202,7 +219,7 @@ const updateEventByID = async (id, body, user) => {
           text: `Please note that the meeting link for ${event.name} has been updated as follows. We look foward to seeing you there!`,
           boxText: body.joinLink,
           buttonURL: body.joinLink,
-          buttonText: 'Join'
+          buttonText: 'Join',
         };
         var htmlToSend = template(replacements);
         var mailOptions = {
@@ -251,6 +268,33 @@ const deleteEventById = async (id, user) => {
     event.remove();
   });
 };
+
+const getEventStatus = (startTime, endTime) => {
+  const currentTime = Date.now();
+
+  if (currentTime < startTime) {
+    return 'Upcoming';
+  } else if (currentTime > startTime && currentTime < endTime) {
+    return 'Happening Now';
+  } else {
+    return 'Closed';
+  }
+};
+
+const uploadSpeakerPhotos = async (modifiedSpeakers, name) => {
+  return await Promise.all(
+    modifiedSpeakers.map(async function (speaker, index) {
+      if (!speaker.photo.includes('https://firebasestorage.googleapis.com')) {
+        await ImageUpload(
+          speaker.photo,
+          `${name}/speaker` + index.toString()
+        ).then((imageURL) => (speaker.photo = imageURL));
+      }
+      return speaker;
+    })
+  );
+};
+
 export default {
   createEvent,
   getEventById,

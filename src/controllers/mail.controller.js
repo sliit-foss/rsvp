@@ -1,7 +1,7 @@
-import MailService from './mail.service';
-import ClientConst from './mail.constants';
-import asyncHandler from '../../middleware/async';
-import { makeResponse } from '../../utils/response';
+import MailService from '../services/mail.service';
+import ClientConst from '../constants/mail.constants';
+import asyncHandler from '../middleware/async';
+import { makeResponse } from '../utils/response';
 
 /**
  *

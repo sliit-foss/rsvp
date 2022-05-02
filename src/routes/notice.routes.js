@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import NoticeController from './notice.controller';
+import NoticeController from '../controllers/notice.controller';
 import passport from 'passport';
 
 const router = Router();

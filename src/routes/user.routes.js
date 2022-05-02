@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import UserController from './user.controller';
+import UserController from '../controllers/user.controller';
 import passport from 'passport';
 
 const router = Router();
+
 router.post(
   '/',
   // passport.authenticate('jwt', { session: false }),

@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import ClientConst from './mail.constants';
+import ClientConst from '../constants/mail.constants';
 
 /**
  *
@@ -20,21 +20,21 @@ var transport = nodemailer.createTransport({
 });
 
 const sendMail = async (mailOptions) => {
-    return new Promise((resolve, reject) => {
-      transport.sendMail(mailOptions, (error, info) => {
-        if (error) reject(error);
-        resolve(true);
-      });
+  return new Promise((resolve, reject) => {
+    transport.sendMail(mailOptions, (error) => {
+      if (error) reject(error);
+      resolve(true);
     });
+  });
 };
 
 const checkAvailability = async () => {
-    return new Promise((resolve) => {
-      transport.verify(async function (error) {
-        if (error) reject(error)
-        resolve(true);
-      });
+  return new Promise((resolve, reject) => {
+    transport.verify(async function (error) {
+      if (error) reject(error);
+      resolve(true);
     });
+  });
 };
 
 export default {

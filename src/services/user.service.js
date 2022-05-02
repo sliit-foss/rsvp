@@ -1,9 +1,9 @@
-import User from './user.model';
-import MailService from '../mails/mail.service';
-import ClientConst from '../mails/mail.constants';
-import { validateAdminRequest } from '../../middleware/requestValidator';
-import handlebars from 'handlebars';
 import fs from 'fs';
+import User from '../models/user.model';
+import MailService from './mail.service';
+import ClientConst from '../constants/mail.constants';
+import { validateAdminRequest } from '../middleware/requestValidator';
+import handlebars from 'handlebars';
 
 /**
  * Create user in db
@@ -31,11 +31,13 @@ const createUser = async (req) => {
   var replacements = {
     title: 'WELCOME',
     username: username,
-    text: `You have been assigned as ${role == 'Admin' ? 'an ' : 'a '} ${role} to the RSVP management panel. Please use the following password to login to the website. 
+    text: `You have been assigned as ${
+      role == 'Admin' ? 'an ' : 'a '
+    } ${role} to the RSVP management panel. Please use the following password to login to the website. 
     You may reset this password by visiting your account info section of the management panel`,
     boxText: password,
     buttonURL: 'https://rsvp.sliitfoss.org/login',
-    buttonText: 'Login'
+    buttonText: 'Login',
   };
   var htmlToSend = template(replacements);
 
@@ -46,17 +48,17 @@ const createUser = async (req) => {
     html: htmlToSend,
   };
   try {
-    await MailService.sendMail(mailOptions)
+    await MailService.sendMail(mailOptions);
     return {
       success: true,
       data: createdUser,
-    }
+    };
   } catch (err) {
     await User.findByIdAndDelete(createdUser._id);
     return {
       success: false,
       error: err,
-    }
+    };
   }
 };
 

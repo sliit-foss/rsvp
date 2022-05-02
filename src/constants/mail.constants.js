@@ -1,4 +1,4 @@
-import * as config from '../../config';
+import * as config from '../config';
 
 const CREDENTIALS = {
   HOST: config.MAIL.HOST,
