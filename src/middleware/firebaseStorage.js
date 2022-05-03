@@ -31,7 +31,6 @@ export const ImageDelete = async (imageURL) => {
       .split('/')
       .reverse();
     const imagePath = `${pathArray[2]}/${pathArray[1]}/${pathArray[0]}`;
-    console.log(imagePath)
     await admin.storage().bucket().file(imagePath).delete();
   }
 };
