@@ -15,7 +15,7 @@ export const PRIV_KEY = process.env.PRIV_KEY;
  * @example mongodb://localhost:27017/db_name
  * 'mongodb://root:myfoss@localhost:27017/rsvp?authSource=admin'
  */
-export const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING_LOCAL
+export const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING
 
 /**
  * @constant DB_HOST hostname of database. Can be an IP or an URI.
