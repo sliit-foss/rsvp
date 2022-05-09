@@ -16,5 +16,5 @@ export const makeResponse = ({ res, success = true, message, data = {}, status }
   } else {
     status = status || HTTP_STATUS.OK;
   }
-  return res.status(status).json({ success: false, message: message.message || message, data: data, stack: NODE_ENV !== 'production' ? message.stack : null })
+  return res.status(status).json({ success, message: message.message || message, data: data, stack: NODE_ENV !== 'production' ? message.stack : null })
 }
