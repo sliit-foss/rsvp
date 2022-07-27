@@ -41,14 +41,16 @@ const createEvent = async (
     tags,
     joinLink,
     host,
+    faculty
   },
-  createdBy
+  createdBy,
+  userRole
 ) => {
   const duplicateEvents = (await Event.find({ name: name })).filter((event) => {
     if (
       event.createdBy === createdBy &&
       new Date(event.startTime).toLocaleString().substring(0, 10) ===
-        new Date(startTime).toLocaleString().substring(0, 10)
+      new Date(startTime).toLocaleString().substring(0, 10)
     ) {
       return event;
     }
@@ -65,11 +67,15 @@ const createEvent = async (
     speakers = await uploadSpeakerPhotos(speakers, name);
   }
   if (
+    status !== EVENT_STATUS.PANDING &&
     status !== EVENT_STATUS.CANCELLED &&
     status !== EVENT_STATUS.POSTPONED &&
     status !== EVENT_STATUS.CLOSED
   ) {
     status = getEventStatus(startTime, endTime);
+  }
+  if (userRole != 'Admin') {
+    status = EVENT_STATUS.PANDING;
   }
 
   const event = new Event({
@@ -87,7 +93,7 @@ const createEvent = async (
     createdBy,
     host,
     joinLink,
-    createdBy,
+    faculty,
   });
 
   return event.save();
@@ -112,6 +118,7 @@ const getAllEvents = async (perpage, page, club) => {
     if (!err) {
       events.map(async function (event) {
         if (
+          event.status !== EVENT_STATUS.PANDING &&
           event.status !== EVENT_STATUS.CANCELLED &&
           event.status !== EVENT_STATUS.POSTPONED &&
           event.status !== EVENT_STATUS.CLOSED
@@ -122,7 +129,37 @@ const getAllEvents = async (perpage, page, club) => {
       });
     }
   });
-  return await Event.find(club == 'fcsc' ? { createdBy: 'FCSC' } : {})
+  return await Event.find(club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }], status: { $not: { $eq: "Pending" } } } : { status: { $not: { $eq: "Pending" } } })
+    .sort({ startTime: -1 })
+    .limit(parseInt(perpage))
+    .skip((parseInt(page) - 1) * parseInt(page))
+    .select(['-speakers', '-photos', '-tags', '-attendees']);
+};
+
+/**
+ *
+ * @param perpage
+ * @param page
+ * @param club
+ * @returns {Query<Array<Document>, Document>}
+ */
+const getAdminEventList = async (perpage, page, club) => {
+  await Event.find(async function (err, events) {
+    if (!err) {
+      events.map(async function (event) {
+        if (
+          event.status !== EVENT_STATUS.PANDING &&
+          event.status !== EVENT_STATUS.CANCELLED &&
+          event.status !== EVENT_STATUS.POSTPONED &&
+          event.status !== EVENT_STATUS.CLOSED
+        ) {
+          event.status = getEventStatus(event.startTime, event.endTime);
+          event.save();
+        }
+      });
+    }
+  });
+  return await Event.find(club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }] } : {})
     .sort({ startTime: -1 })
     .limit(parseInt(perpage))
     .skip((parseInt(page) - 1) * parseInt(page))
@@ -135,7 +172,7 @@ const getAllEvents = async (perpage, page, club) => {
  * @returns {Query<Array<Document>, Document>}
  */
 const getLatestEvents = async (club) => {
-  const results = await Event.find(club == 'fcsc' ? { createdBy: 'FCSC' } : {})
+  const results = await Event.find(club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }] } : {})
     .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
     .sort({ status: 1, startTime: 1 })
     .select(['-attendees', '-speakers'])
@@ -143,7 +180,7 @@ const getLatestEvents = async (club) => {
 
   if (!results.length) {
     const event = await Event.findOne(
-      club == 'fcsc' ? { createdBy: 'FCSC' } : {}
+      club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }] } : {}
     )
       .sort({ startTime: -1 })
       .select(['-attendees', '-speakers']);
@@ -175,10 +212,10 @@ const updateEventByID = async (id, body, user) => {
     if (
       e.createdBy === (body.createdBy || event.createdBy) &&
       new Date(e.startTime).toLocaleString().substring(0, 10) ===
-        ((body.startTime
-          ? new Date(body.startTime).toLocaleString().substring(0, 10)
-          : undefined) ||
-          new Date(event.startTime).toLocaleString().substring(0, 10))
+      ((body.startTime
+        ? new Date(body.startTime).toLocaleString().substring(0, 10)
+        : undefined) ||
+        new Date(event.startTime).toLocaleString().substring(0, 10))
     ) {
       return e;
     }
@@ -202,7 +239,9 @@ const updateEventByID = async (id, body, user) => {
   if (body.speakers) {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
   }
-
+  if ((user.role != 'Admin' && event.status == EVENT_STATUS.PANDING) || (body.status == EVENT_STATUS.PANDING && event.attendeeCount > 0)) {
+    delete body.status
+  }
   if (body.joinLink) {
     const attendees = event.attendees;
     await Promise.all(
@@ -302,4 +341,5 @@ export default {
   getLatestEvents,
   updateEventByID,
   deleteEventById,
+  getAdminEventList,
 };

@@ -3,6 +3,7 @@
  * @type {{HAPPENING: string, UPCOMING: string, CLOSED: string, CANCELLED: string, POSTPONED: string}}
  */
 const EVENT_STATUS = {
+  PANDING: 'Pending',
   HAPPENING: 'Happening Now',
   UPCOMING: 'Upcoming',
   CLOSED: 'Closed',

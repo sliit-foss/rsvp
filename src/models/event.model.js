@@ -39,6 +39,7 @@ const eventSchema = new Schema(
     joinLink: { type: String },
     createdBy: { type: String },
     host: { type: String },
+    faculty: { type: [String] },
   },
   { timestamps: true }
 );
