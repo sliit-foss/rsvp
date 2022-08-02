@@ -10,7 +10,7 @@ import asyncHandler from '../middleware/async';
  * @returns {Promise<*>}
  */
 const createEvent = asyncHandler(async (req, res) => {
-  const event = await EventService.createEvent(req.body, req.user.faculty, req.user.role);
+  const event = await EventService.createEvent(req.body, req.user);
   return makeResponse({ res, message: 'Event added successfully', data: event });
 });
 
@@ -37,18 +37,11 @@ const getAllEvents = asyncHandler(async (req, res) => {
     req.query.perpage,
     req.query.page,
     req.params.club,
+    req.user
   );
   return makeResponse({ res, message: 'Data retrieval successful', data: events || [] });
 });
 
-const getAdminEventList = asyncHandler(async (req, res) => {
-  const events = await EventService.getAdminEventList(
-    req.query.perpage,
-    req.query.page,
-    req.params.club,
-  );
-  return makeResponse({ res, message: 'Data retrieval successful', data: events || [] });
-});
 
 
 /**
@@ -97,5 +90,4 @@ export default {
   getLatestEvents,
   updateEventByID,
   deleteEventById,
-  getAdminEventList
 };

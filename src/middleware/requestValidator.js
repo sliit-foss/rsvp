@@ -1,5 +1,5 @@
 import { ERROR_RESPONSE, makeResponse } from '../utils/response';
-
+import passport from 'passport';
 /**
  * @function joiValidator validates request against a provided joi schema
  */
@@ -23,7 +23,7 @@ const validateAdminRequest = (req) => {
  * @function validateRequest validates whether the request is coming from an Admin or from a member of the club to which the event which is requested to be modified belongs to (For RSVP functionalities)
  */
 const validateRequest = (event, user, errorMessage) => {
-  if (event.createdBy != user.faculty && user.role != 'Admin') {
+  if (!event.faculty.includes(user.faculty) && user.role != 'Admin') {
     throw {
       message: errorMessage,
     };
@@ -39,9 +39,21 @@ const validateFCSCRequest = (req) => {
   }
 };
 
+/**
+ * @function isLogin validates login
+ */
+const isLogin = (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    req.user = user;
+    next()
+  })(req, res, next)
+
+};
+
 export {
   joiValidator,
   validateAdminRequest,
   validateRequest,
   validateFCSCRequest,
+  isLogin
 };

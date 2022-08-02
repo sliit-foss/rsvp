@@ -21,7 +21,6 @@ import logger from '../utils/logger';
  * @param speakers
  * @param capacity
  * @param tags
- * @param createdBy
  * @param joinLink
  * @param host
  * @returns {Promise<Document<any>>}
@@ -43,12 +42,11 @@ const createEvent = async (
     host,
     faculty
   },
-  createdBy,
-  userRole
+  user
 ) => {
   const duplicateEvents = (await Event.find({ name: name })).filter((event) => {
     if (
-      event.createdBy === createdBy &&
+      event.faculty.sort().toString() == faculty.sort().toString() &&
       new Date(event.startTime).toLocaleString().substring(0, 10) ===
       new Date(startTime).toLocaleString().substring(0, 10)
     ) {
@@ -60,6 +58,11 @@ const createEvent = async (
       'There already is an event by the same name taking place on the same day by your faculty'
     );
   }
+  if (!faculty.includes(user.faculty)) {
+    throw new Error(
+      "Publisher's faculty is mandatory"
+    );
+  }
   if (headerImage) {
     headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
   }
@@ -67,15 +70,15 @@ const createEvent = async (
     speakers = await uploadSpeakerPhotos(speakers, name);
   }
   if (
-    status !== EVENT_STATUS.PANDING &&
+    status !== EVENT_STATUS.PENDING &&
     status !== EVENT_STATUS.CANCELLED &&
     status !== EVENT_STATUS.POSTPONED &&
     status !== EVENT_STATUS.CLOSED
   ) {
     status = getEventStatus(startTime, endTime);
   }
-  if (userRole != 'Admin') {
-    status = EVENT_STATUS.PANDING;
+  if (user.role != 'Admin') {
+    status = EVENT_STATUS.PENDING;
   }
 
   const event = new Event({
@@ -90,7 +93,6 @@ const createEvent = async (
     speakers,
     capacity,
     tags,
-    createdBy,
     host,
     joinLink,
     faculty,
@@ -113,12 +115,12 @@ const getEventById = (id) => Event.findById(id).select(['-attendees']);
  * @param club
  * @returns {Query<Array<Document>, Document>}
  */
-const getAllEvents = async (perpage, page, club) => {
+const getAllEvents = async (perpage, page, club, user) => {
   await Event.find(async function (err, events) {
     if (!err) {
       events.map(async function (event) {
         if (
-          event.status !== EVENT_STATUS.PANDING &&
+          event.status !== EVENT_STATUS.PENDING &&
           event.status !== EVENT_STATUS.CANCELLED &&
           event.status !== EVENT_STATUS.POSTPONED &&
           event.status !== EVENT_STATUS.CLOSED
@@ -129,41 +131,20 @@ const getAllEvents = async (perpage, page, club) => {
       });
     }
   });
-  return await Event.find(club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }], status: { $not: { $eq: "Pending" } } } : { status: { $not: { $eq: "Pending" } } })
-    .sort({ startTime: -1 })
-    .limit(parseInt(perpage))
-    .skip((parseInt(page) - 1) * parseInt(page))
-    .select(['-speakers', '-photos', '-tags', '-attendees']);
-};
+  if (user) {
+    return await Event.find(club == 'fcsc' ? { "faculty": "FCSC" } : {})
+      .sort({ startTime: -1 })
+      .limit(parseInt(perpage))
+      .skip((parseInt(page) - 1) * parseInt(page))
+      .select(['-speakers', '-photos', '-tags', '-attendees']);
+  } else {
+    return await Event.find(club == 'fcsc' ? { "faculty": "FCSC", status: { $not: { $eq: "Pending" } } } : { status: { $not: { $eq: "Pending" } } })
+      .sort({ startTime: -1 })
+      .limit(parseInt(perpage))
+      .skip((parseInt(page) - 1) * parseInt(page))
+      .select(['-speakers', '-photos', '-tags', '-attendees']);
+  }
 
-/**
- *
- * @param perpage
- * @param page
- * @param club
- * @returns {Query<Array<Document>, Document>}
- */
-const getAdminEventList = async (perpage, page, club) => {
-  await Event.find(async function (err, events) {
-    if (!err) {
-      events.map(async function (event) {
-        if (
-          event.status !== EVENT_STATUS.PANDING &&
-          event.status !== EVENT_STATUS.CANCELLED &&
-          event.status !== EVENT_STATUS.POSTPONED &&
-          event.status !== EVENT_STATUS.CLOSED
-        ) {
-          event.status = getEventStatus(event.startTime, event.endTime);
-          event.save();
-        }
-      });
-    }
-  });
-  return await Event.find(club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }] } : {})
-    .sort({ startTime: -1 })
-    .limit(parseInt(perpage))
-    .skip((parseInt(page) - 1) * parseInt(page))
-    .select(['-speakers', '-photos', '-tags', '-attendees']);
 };
 
 /**
@@ -172,7 +153,7 @@ const getAdminEventList = async (perpage, page, club) => {
  * @returns {Query<Array<Document>, Document>}
  */
 const getLatestEvents = async (club) => {
-  const results = await Event.find(club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }] } : {})
+  const results = await Event.find(club == 'fcsc' ? { "faculty": "FCSC" } : {})
     .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
     .sort({ status: 1, startTime: 1 })
     .select(['-attendees', '-speakers'])
@@ -180,7 +161,7 @@ const getLatestEvents = async (club) => {
 
   if (!results.length) {
     const event = await Event.findOne(
-      club == 'fcsc' ? { $or: [{ "createdBy": "FCSC" }, { "faculty": "FCSC" }] } : {}
+      club == 'fcsc' ? { "faculty": "FCSC" } : {}
     )
       .sort({ startTime: -1 })
       .select(['-attendees', '-speakers']);
@@ -210,7 +191,7 @@ const updateEventByID = async (id, body, user) => {
     await Event.find({ name: body.name || event.name })
   ).filter((e) => {
     if (
-      e.createdBy === (body.createdBy || event.createdBy) &&
+      e.faculty.sort().toString() === (body.faculty.sort().toString() || event.faculty.sort().toString()) &&
       new Date(e.startTime).toLocaleString().substring(0, 10) ===
       ((body.startTime
         ? new Date(body.startTime).toLocaleString().substring(0, 10)
@@ -239,7 +220,7 @@ const updateEventByID = async (id, body, user) => {
   if (body.speakers) {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
   }
-  if ((user.role != 'Admin' && event.status == EVENT_STATUS.PANDING) || (body.status == EVENT_STATUS.PANDING && event.attendeeCount > 0)) {
+  if ((user.role != 'Admin' && event.status == EVENT_STATUS.PENDING) || (body.status == EVENT_STATUS.PENDING && event.attendeeCount > 0)) {
     delete body.status
   }
   if (body.joinLink) {
@@ -341,5 +322,4 @@ export default {
   getLatestEvents,
   updateEventByID,
   deleteEventById,
-  getAdminEventList,
 };

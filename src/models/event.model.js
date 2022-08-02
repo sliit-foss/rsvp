@@ -37,7 +37,6 @@ const eventSchema = new Schema(
     capacity: { type: Number, required: true },
     tags: { type: [String] },
     joinLink: { type: String },
-    createdBy: { type: String },
     host: { type: String },
     faculty: { type: [String] },
   },
