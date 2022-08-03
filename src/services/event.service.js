@@ -46,7 +46,7 @@ const createEvent = async (
 ) => {
   const duplicateEvents = (await Event.find({ name: name })).filter((event) => {
     if (
-      event.faculty.sort().toString() == faculty.sort().toString() &&
+      JSON.stringify(event.faculty) === JSON.stringify(faculty) &&
       new Date(event.startTime).toLocaleString().substring(0, 10) ===
       new Date(startTime).toLocaleString().substring(0, 10)
     ) {
@@ -191,7 +191,7 @@ const updateEventByID = async (id, body, user) => {
     await Event.find({ name: body.name || event.name })
   ).filter((e) => {
     if (
-      e.faculty.sort().toString() === (body.faculty.sort().toString() || event.faculty.sort().toString()) &&
+      JSON.stringify(e.faculty) === (JSON.stringify(body.faculty) || JSON.stringify(event.faculty)) &&
       new Date(e.startTime).toLocaleString().substring(0, 10) ===
       ((body.startTime
         ? new Date(body.startTime).toLocaleString().substring(0, 10)
