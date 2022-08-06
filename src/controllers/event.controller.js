@@ -10,7 +10,7 @@ import asyncHandler from '../middleware/async';
  * @returns {Promise<*>}
  */
 const createEvent = asyncHandler(async (req, res) => {
-  const event = await EventService.createEvent(req.body, req.user.faculty);
+  const event = await EventService.createEvent(req.body, req.user);
   return makeResponse({ res, message: 'Event added successfully', data: event });
 });
 
@@ -22,7 +22,7 @@ const createEvent = asyncHandler(async (req, res) => {
  */
 const getEventById = asyncHandler(async (req, res) => {
   const event = await EventService.getEventById(req.params.id);
-  if(!event) return makeResponse({ res, success: false, message: `Event not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  if (!event) return makeResponse({ res, success: false, message: `Event not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
   return makeResponse({ res, message: 'Data retrieval successful', data: event });
 });
 
@@ -37,9 +37,12 @@ const getAllEvents = asyncHandler(async (req, res) => {
     req.query.perpage,
     req.query.page,
     req.params.club,
+    req.user
   );
   return makeResponse({ res, message: 'Data retrieval successful', data: events || [] });
 });
+
+
 
 /**
  *
