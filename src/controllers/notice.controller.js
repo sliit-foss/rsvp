@@ -1,5 +1,5 @@
-import NoticeService from '../services/notice.service';
 import asyncHandler from '../middleware/async';
+import NoticeService from '../services/notice.service';
 import { HTTP_STATUS } from '../utils/http';
 import { makeResponse } from '../utils/response';
 
@@ -30,7 +30,13 @@ const addNotice = asyncHandler(async (req, res) => {
  */
 const editNotice = asyncHandler(async (req, res) => {
   const notice = await NoticeService.editNotice(req);
-  if (!notice) return makeResponse({ res, success: false, message: `Notice not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  if (!notice)
+    return makeResponse({
+      res,
+      success: false,
+      message: `Notice not found with id:${req.params.id}`,
+      status: HTTP_STATUS.BAD_REQUEST
+    });
   return makeResponse({ res, message: `Successfully edited notice with id ${req.params.id}` });
 });
 
@@ -42,7 +48,13 @@ const editNotice = asyncHandler(async (req, res) => {
  */
 const deleteNotice = asyncHandler(async (req, res) => {
   const notice = await NoticeService.deleteNotice(req);
-  if (!notice) return makeResponse({ res, success: false, message: `Notice not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  if (!notice)
+    return makeResponse({
+      res,
+      success: false,
+      message: `Notice not found with id:${req.params.id}`,
+      status: HTTP_STATUS.BAD_REQUEST
+    });
   return makeResponse({ res, message: `Sucessfully deleted notice with id:${req.params.id}` });
 });
 
@@ -61,5 +73,5 @@ export default {
   addNotice,
   editNotice,
   deleteNotice,
-  getNotices,
+  getNotices
 };

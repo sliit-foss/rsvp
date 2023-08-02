@@ -8,7 +8,7 @@ const EVENT_STATUS = {
   UPCOMING: 'Upcoming',
   CLOSED: 'Closed',
   CANCELLED: 'Cancelled',
-  POSTPONED: 'Postponed',
+  POSTPONED: 'Postponed'
 };
 
 export { EVENT_STATUS };

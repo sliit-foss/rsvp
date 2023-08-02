@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 
 /**
@@ -11,13 +11,13 @@ const userSchema = new Schema({
   role: {
     type: String,
     enum: ['Admin', 'Publisher'],
-    required: true,
+    required: true
   },
   faculty: {
     type: String,
     enum: ['FOSS', 'FCSC', 'MS Club', 'Media Unit', 'SLIIT Cyber Security Community', 'SESC'],
-    required: true,
-  },
+    required: true
+  }
 });
 
 userSchema.plugin(passportLocalMongoose);

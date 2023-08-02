@@ -1,12 +1,12 @@
-import { ERROR_RESPONSE, makeResponse } from '../utils/response';
 import passport from 'passport';
+import { ERROR_RESPONSE, makeResponse } from '../utils/response';
+
 /**
  * @function joiValidator validates request against a provided joi schema
  */
 const joiValidator = (schema) => (req, res, next) => {
   const validation = schema.validate(req.body);
-  if (validation.error)
-    return makeResponse({ res, success: false, message: validation.error });
+  if (validation.error) return makeResponse({ res, success: false, message: validation.error });
   next();
 };
 
@@ -25,7 +25,7 @@ const validateAdminRequest = (req) => {
 const validateRequest = (event, user, errorMessage) => {
   if (!event.faculty.includes(user.faculty) && user.role != 'Admin') {
     throw {
-      message: errorMessage,
+      message: errorMessage
     };
   }
 };
@@ -43,17 +43,10 @@ const validateFCSCRequest = (req) => {
  * @function isLogin validates login
  */
 const isLogin = (req, res, next) => {
-  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+  passport.authenticate('jwt', { session: false }, (err, user) => {
     req.user = user;
-    next()
-  })(req, res, next)
-
+    next();
+  })(req, res, next);
 };
 
-export {
-  joiValidator,
-  validateAdminRequest,
-  validateRequest,
-  validateFCSCRequest,
-  isLogin
-};
+export { joiValidator, validateAdminRequest, validateRequest, validateFCSCRequest, isLogin };

@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 /**
  *
@@ -6,7 +6,7 @@ import { model, Schema } from 'mongoose';
  */
 const rsvpSubsctiptionSchema = new Schema({
   email: { type: String, required: true, unique: true },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now }
 });
 
 export default model('RSVPSubscription', rsvpSubsctiptionSchema);

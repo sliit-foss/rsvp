@@ -12,13 +12,13 @@ const speakerSchema = new Schema({
   topic: { type: String, required: true },
   photo: { type: String, required: true },
   twitterURL: { type: String, required: true },
-  linkedInURL: { type: String, required: true },
+  linkedInURL: { type: String, required: true }
 });
 
 const attendeeSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  organization: { type: String, required: true },
+  organization: { type: String, required: true }
 });
 
 const eventSchema = new Schema(
@@ -38,7 +38,7 @@ const eventSchema = new Schema(
     tags: { type: [String] },
     joinLink: { type: String },
     host: { type: String },
-    faculty: { type: [String] },
+    faculty: { type: [String] }
   },
   { timestamps: true }
 );

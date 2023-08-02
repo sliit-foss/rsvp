@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import EventController from '../controllers/event.controller';
 import passport from 'passport';
+import EventController from '../controllers/event.controller';
 import { isLogin } from '../middleware/requestValidator';
 
 const router = Router();
@@ -10,24 +10,12 @@ router.get('/:id', EventController.getEventById);
 router.get(
   '/allevents/:club',
   (req, res, next) => {
-    isLogin(req, res, next)
+    isLogin(req, res, next);
   },
   EventController.getAllEvents
 );
-router.post(
-  '/',
-  passport.authenticate('jwt', { session: false }),
-  EventController.createEvent
-);
-router.put(
-  '/:id',
-  passport.authenticate('jwt', { session: false }),
-  EventController.updateEventByID
-);
-router.delete(
-  '/:id',
-  passport.authenticate('jwt', { session: false }),
-  EventController.deleteEventById
-);
+router.post('/', passport.authenticate('jwt', { session: false }), EventController.createEvent);
+router.put('/:id', passport.authenticate('jwt', { session: false }), EventController.updateEventByID);
+router.delete('/:id', passport.authenticate('jwt', { session: false }), EventController.deleteEventById);
 
 export default router;

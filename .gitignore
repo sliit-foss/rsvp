@@ -3,10 +3,9 @@ build
 logs
 .idea/
 
-.env*
+.env
+env/
 
 npm-debug.log
 
 yarn.lock
-
-env/

@@ -1,7 +1,7 @@
+import asyncHandler from '../middleware/async';
 import EventService from '../services/event.service';
 import { HTTP_STATUS } from '../utils/http';
 import { makeResponse } from '../utils/response';
-import asyncHandler from '../middleware/async';
 
 /**
  *
@@ -22,7 +22,13 @@ const createEvent = asyncHandler(async (req, res) => {
  */
 const getEventById = asyncHandler(async (req, res) => {
   const event = await EventService.getEventById(req.params.id);
-  if (!event) return makeResponse({ res, success: false, message: `Event not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  if (!event)
+    return makeResponse({
+      res,
+      success: false,
+      message: `Event not found with id:${req.params.id}`,
+      status: HTTP_STATUS.BAD_REQUEST
+    });
   return makeResponse({ res, message: 'Data retrieval successful', data: event });
 });
 
@@ -33,16 +39,9 @@ const getEventById = asyncHandler(async (req, res) => {
  * @returns {Promise<void>}
  */
 const getAllEvents = asyncHandler(async (req, res) => {
-  const events = await EventService.getAllEvents(
-    req.query.perpage,
-    req.query.page,
-    req.params.club,
-    req.user
-  );
+  const events = await EventService.getAllEvents(req.query.perpage, req.query.page, req.params.club, req.user);
   return makeResponse({ res, message: 'Data retrieval successful', data: events || [] });
 });
-
-
 
 /**
  *
@@ -62,12 +61,14 @@ const getLatestEvents = asyncHandler(async (req, res) => {
  * @returns {Promise<*>}
  */
 const updateEventByID = asyncHandler(async (req, res) => {
-  const updatedEvent = await EventService.updateEventByID(
-    req.params.id,
-    req.body,
-    req.user,
-  );
-  if (!updatedEvent) return makeResponse({ res, success: false, message: `Event not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  const updatedEvent = await EventService.updateEventByID(req.params.id, req.body, req.user);
+  if (!updatedEvent)
+    return makeResponse({
+      res,
+      success: false,
+      message: `Event not found with id:${req.params.id}`,
+      status: HTTP_STATUS.BAD_REQUEST
+    });
   return makeResponse({ res, message: `Sucessfully updated event with id:${req.params.id}` });
 });
 
@@ -79,7 +80,13 @@ const updateEventByID = asyncHandler(async (req, res) => {
  */
 const deleteEventById = asyncHandler(async (req, res) => {
   const event = await EventService.deleteEventById(req.params.id, req.user);
-  if (!event) return makeResponse({ res, success: false, message: `Event not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  if (!event)
+    return makeResponse({
+      res,
+      success: false,
+      message: `Event not found with id:${req.params.id}`,
+      status: HTTP_STATUS.BAD_REQUEST
+    });
   return makeResponse({ res, message: `Sucessfully deleted event with id:${req.params.id}` });
 });
 
@@ -89,5 +96,5 @@ export default {
   getAllEvents,
   getLatestEvents,
   updateEventByID,
-  deleteEventById,
+  deleteEventById
 };

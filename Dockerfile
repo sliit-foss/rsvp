@@ -3,7 +3,7 @@ FROM node:14.15.4-alpine as builder
 WORKDIR /usr/src/app
 
 COPY package* ./
-RUN npm install
+RUN npm install --ignore-scripts
 
 COPY . .
 
@@ -14,7 +14,6 @@ FROM node:14.15.4-alpine
 WORKDIR /usr/src/app
 
 COPY package* ./
-RUN npm install
 
 COPY --from=builder /usr/src/app/build ./
 

@@ -1,0 +1,18 @@
+{
+    "printWidth": 120,
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "singleQuote": true,
+    "quoteProps": "consistent",
+    "trailingComma": "none",
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
+    "importOrder": [
+      "^(.*express*(.*)$)",
+      "^(.*@sliit-foss*(.*)$)",
+      "<THIRD_PARTY_MODULES>",
+      "^(.*@/*(.*)$)",
+      "^[./]"
+    ],
+    "importOrderSeparation": false,
+    "importOrderSortSpecifiers": true
+  }
