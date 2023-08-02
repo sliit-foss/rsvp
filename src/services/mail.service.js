@@ -10,16 +10,16 @@ import ClientConst from '../constants/mail.constants';
  */
 
 // Initialize SMTP Instance
-var transport = nodemailer.createTransport({
+const transport = nodemailer.createTransport({
   service: 'gmail',
   host: ClientConst.CREDENTIALS.HOST,
   auth: {
     user: ClientConst.CREDENTIALS.USER,
-    pass: ClientConst.CREDENTIALS.PASSWORD,
-  },
+    pass: ClientConst.CREDENTIALS.PASSWORD
+  }
 });
 
-const sendMail = async (mailOptions) => {
+const sendMail = (mailOptions) => {
   return new Promise((resolve, reject) => {
     transport.sendMail(mailOptions, (error) => {
       if (error) reject(error);
@@ -28,9 +28,9 @@ const sendMail = async (mailOptions) => {
   });
 };
 
-const checkAvailability = async () => {
+const checkAvailability = () => {
   return new Promise((resolve, reject) => {
-    transport.verify(async function (error) {
+    transport.verify(function (error) {
       if (error) reject(error);
       resolve(true);
     });
@@ -39,5 +39,5 @@ const checkAvailability = async () => {
 
 export default {
   sendMail,
-  checkAvailability,
+  checkAvailability
 };

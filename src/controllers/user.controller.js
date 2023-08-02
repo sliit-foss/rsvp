@@ -1,7 +1,7 @@
+import asyncHandler from '../middleware/async';
 import UserService from '../services/user.service';
 import { HTTP_STATUS } from '../utils/http';
 import { makeResponse } from '../utils/response';
-import asyncHandler from '../middleware/async';
 
 /**
  *
@@ -45,7 +45,13 @@ const getMyUserData = asyncHandler(async (req, res) => {
  */
 const deleteUserById = asyncHandler(async (req, res) => {
   const user = await UserService.deleteUserById(req);
-  if (!user) makeResponse({ res, success: false, message: `User not found with id:${req.params.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  if (!user)
+    makeResponse({
+      res,
+      success: false,
+      message: `User not found with id:${req.params.id}`,
+      status: HTTP_STATUS.BAD_REQUEST
+    });
   return makeResponse({ res, message: `Sucessfully deleted user with id:${req.params.id}` });
 });
 
@@ -57,7 +63,13 @@ const deleteUserById = asyncHandler(async (req, res) => {
  */
 const changeUserPassword = asyncHandler(async (req, res) => {
   const user = await UserService.changeUserPassword(req);
-  if (!user) return makeResponse({ res, success: false, message: `User not found with id:${req.user.id}`, status: HTTP_STATUS.BAD_REQUEST });
+  if (!user)
+    return makeResponse({
+      res,
+      success: false,
+      message: `User not found with id:${req.user.id}`,
+      status: HTTP_STATUS.BAD_REQUEST
+    });
   return makeResponse({ res, message: `Your password has been updated successfully` });
 });
 
@@ -66,5 +78,5 @@ export default {
   getAllUsers,
   getMyUserData,
   deleteUserById,
-  changeUserPassword,
+  changeUserPassword
 };

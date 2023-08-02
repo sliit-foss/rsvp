@@ -9,66 +9,63 @@
     "copy": "babel src --out-dir ./build --copy-files",
     "clean": "rm -rf .nyc_output build coverage && mkdir build",
     "dev": "cross-env DEBUG=dev nodemon -r dotenv/config --exec babel-node src/index.js",
-    "start": "node -r dotenv/config ./build/index.js",
+    "format": "prettier --write --cache \"**/*.{js,md}\"",
+    "lint": "eslint src --ext js,md --ignore-path .gitignore --fix --cache --report-unused-disable-directives",
+    "prepare": "lefthook install",
+    "start": "node ./build/index.js",
     "test": "node ./test/e2e/index.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run build"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write"
-    ]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sliit-foss/rsvp.git"
   },
   "author": "SLIIT FOSS Community",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/sliit-foss/rsvp/issues"
   },
   "homepage": "https://github.com/sliit-foss/rsvp#readme",
   "dependencies": {
-    "@babel/register": "^7.12.10",
-    "@babel/runtime": "^7.12.5",
-    "cookie-parser": "^1.4.5",
-    "core-js": "^3.15.1",
-    "cors": "^2.8.5",
-    "cross-env": "^7.0.3",
-    "debug": "^4.3.1",
-    "dotenv": "^16.0.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.2",
-    "firebase-admin": "^9.11.0",
-    "handlebars": "^4.7.7",
-    "husky": "^5.1.3",
-    "install": "^0.13.0",
-    "joi": "^17.6.0",
-    "jsonwebtoken": "^8.5.1",
-    "memorystore": "^1.6.6",
-    "mongoose": "^5.11.7",
-    "mongoose-data-seed": "^2.1.6",
-    "morgan": "^1.10.0",
-    "nodemailer": "^6.7.4",
-    "passport": "^0.4.1",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.1.0",
-    "prettier": "^2.2.1",
-    "uuid": "^8.3.2",
-    "winston": "^3.3.3"
+    "@babel/register": "7.12.10",
+    "@babel/runtime": "7.12.5",
+    "cookie-parser": "1.4.5",
+    "core-js": "3.15.1",
+    "cors": "2.8.5",
+    "cross-env": "7.0.3",
+    "express": "4.17.1",
+    "express-session": "1.17.2",
+    "firebase-admin": "9.11.0",
+    "handlebars": "4.7.7",
+    "install": "0.13.0",
+    "joi": "17.6.0",
+    "jsonwebtoken": "8.5.1",
+    "memorystore": "1.6.6",
+    "mongoose": "5.11.7",
+    "mongoose-data-seed": "2.1.6",
+    "morgan": "1.10.0",
+    "nodemailer": "6.7.4",
+    "passport": "0.4.1",
+    "passport-jwt": "4.0.0",
+    "passport-local": "1.0.0",
+    "passport-local-mongoose": "6.1.0",
+    "uuid": "8.3.2",
+    "winston": "3.3.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/node": "^7.12.10",
-    "@babel/preset-env": "^7.12.10",
-    "nodemon": "^2.0.6"
+    "@babel/cli": "7.12.10",
+    "@babel/core": "7.12.10",
+    "@babel/node": "7.12.10",
+    "@babel/preset-env": "7.12.10",
+    "@commitlint/cli": "17.6.5",
+    "@commitlint/config-conventional": "17.6.5",
+    "@sliit-foss/eslint-config-internal": "1.1.4",
+    "@trivago/prettier-plugin-sort-imports": "4.1.1",
+    "dotenv": "16.0.1",
+    "eslint": "8.45.0",
+    "eslint-plugin-import": "2.27.5",
+    "nodemon": "3.0.1",
+    "lefthook": "1.4.3",
+    "prettier": "2.8.8"
   },
   "mdSeed": {
     "seedersFolder": "./seeders"

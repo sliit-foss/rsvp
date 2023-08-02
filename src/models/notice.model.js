@@ -11,10 +11,10 @@ const noticeSchema = new Schema({
   category: {
     type: String,
     enum: ['Latest', 'Older'],
-    required: true,
+    required: true
   },
   photo: { type: String, required: false },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now }
 });
 
 export default model('Notice', noticeSchema);

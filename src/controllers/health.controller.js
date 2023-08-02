@@ -1,5 +1,5 @@
-import { HTTP_STATUS } from '../utils/http';
 import { VERSION } from '../config';
+import { HTTP_STATUS } from '../utils/http';
 
 /**
  * Handle Health Request
@@ -8,8 +8,6 @@ import { VERSION } from '../config';
  * @param {*} next
  * @return body.version Version of API
  */
-export const handleHealthRequest = (req, res, next) => {
-  res
-    .status(HTTP_STATUS.OK)
-    .json({ data: 'rsvp up and running', version: VERSION });
+export const handleHealthRequest = (_, res) => {
+  res.status(HTTP_STATUS.OK).json({ data: 'rsvp up and running', version: VERSION });
 };

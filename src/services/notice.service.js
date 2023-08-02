@@ -1,11 +1,11 @@
 import fs from 'fs';
+import handlebars from 'handlebars';
+import ClientConst from '../constants/mail.constants';
+import { ImageDelete, ImageUpload } from '../middleware/firebaseStorage';
+import { validateFCSCRequest } from '../middleware/requestValidator';
 import Notice from '../models/notice.model';
 import FCSCSubscription from '../models/subscription.fcsc.model';
 import MailService from './mail.service';
-import ClientConst from '../constants/mail.constants';
-import handlebars from 'handlebars';
-import { validateFCSCRequest } from '../middleware/requestValidator';
-import { ImageUpload, ImageDelete } from '../middleware/firebaseStorage';
 
 /**
  * Create notice in db
@@ -16,14 +16,14 @@ import { ImageUpload, ImageDelete } from '../middleware/firebaseStorage';
 const addNotice = async (req, title, body, category, photo, createdAt) => {
   validateFCSCRequest(req);
   if (photo) {
-    photo = await ImageUpload(photo, `noticeBanners/${title + ' ' + category}`);
+    photo = await ImageUpload(photo, `noticeBanners/${`${title} ${category}`}`);
   }
   const notice = new Notice({
     title,
     body,
     category,
     photo,
-    createdAt,
+    createdAt
   });
 
   const res = await notice.save();
@@ -32,26 +32,23 @@ const addNotice = async (req, title, body, category, photo, createdAt) => {
     const subscribedList = await FCSCSubscription.find();
     await Promise.all(
       subscribedList.map(async function (subscribedUser) {
-        const html = fs.readFileSync(
-          __basedir + '/html/emailTemplate.html',
-          'utf8'
-        );
+        const html = fs.readFileSync(`${global.__basedir}/html/emailTemplate.html`, 'utf8');
 
-        var template = handlebars.compile(html);
-        var replacements = {
+        const template = handlebars.compile(html);
+        const replacements = {
           title: 'NOTICE',
           text: title,
           boxText: body,
           buttonURL: 'https://fcsc-web.web.app/notices/',
-          buttonText: "Check out what's new",
+          buttonText: "Check out what's new"
         };
 
-        var htmlToSend = template(replacements);
-        var mailOptions = {
+        const htmlToSend = template(replacements);
+        const mailOptions = {
           from: ClientConst.CREDENTIALS.USER,
           to: subscribedUser.email,
           subject: `FCSC Notice - ${title}`,
-          html: htmlToSend,
+          html: htmlToSend
         };
         await MailService.sendMail(mailOptions);
       })
@@ -70,14 +67,11 @@ const editNotice = async (req) => {
   validateFCSCRequest(req);
   const notice = await Notice.findById(req.params.id);
   if (req.body.photo != notice.photo) {
-    req.body.photo = await ImageUpload(
-      req.body.photo,
-      `noticeBanners/${req.body.title + ' ' + req.body.category}`
-    );
+    req.body.photo = await ImageUpload(req.body.photo, `noticeBanners/${`${req.body.title} ${req.body.category}`}`);
   }
   return Notice.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: false,
+    runValidators: false
   });
 };
 
@@ -109,5 +103,5 @@ export default {
   addNotice,
   editNotice,
   deleteNotice,
-  getNotices,
+  getNotices
 };

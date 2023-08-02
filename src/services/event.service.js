@@ -1,12 +1,12 @@
 import fs from 'fs';
-import Event from '../models/event.model';
-import { EVENT_STATUS } from '../constants/event.constants';
-import { ImageUpload, ImageDelete } from '../middleware/firebaseStorage';
-import { validateRequest } from '../middleware/requestValidator';
-import MailService from './mail.service';
-import ClientConst from '../constants/mail.constants';
 import handlebars from 'handlebars';
+import { EVENT_STATUS } from '../constants/event.constants';
+import ClientConst from '../constants/mail.constants';
+import { ImageDelete, ImageUpload } from '../middleware/firebaseStorage';
+import { validateRequest } from '../middleware/requestValidator';
+import Event from '../models/event.model';
 import logger from '../utils/logger';
+import MailService from './mail.service';
 
 /**
  * Create event in db
@@ -48,20 +48,16 @@ const createEvent = async (
     if (
       JSON.stringify(event.faculty) === JSON.stringify(faculty) &&
       new Date(event.startTime).toLocaleString().substring(0, 10) ===
-      new Date(startTime).toLocaleString().substring(0, 10)
+        new Date(startTime).toLocaleString().substring(0, 10)
     ) {
       return event;
     }
   });
   if (duplicateEvents.length > 0) {
-    throw new Error(
-      'There already is an event by the same name taking place on the same day by your faculty'
-    );
+    throw new Error('There already is an event by the same name taking place on the same day by your faculty');
   }
   if (!faculty.includes(user.faculty)) {
-    throw new Error(
-      "Publisher's faculty is mandatory"
-    );
+    throw new Error("Publisher's faculty is mandatory");
   }
   if (headerImage) {
     headerImage = await ImageUpload(headerImage, `${name}/headerImage`);
@@ -95,7 +91,7 @@ const createEvent = async (
     tags,
     host,
     joinLink,
-    faculty,
+    faculty
   });
 
   return event.save();
@@ -116,9 +112,9 @@ const getEventById = (id) => Event.findById(id).select(['-attendees']);
  * @returns {Query<Array<Document>, Document>}
  */
 const getAllEvents = async (perpage, page, club, user) => {
-  await Event.find(async function (err, events) {
+  await Event.find(function (err, events) {
     if (!err) {
-      events.map(async function (event) {
+      events.map(function (event) {
         if (
           event.status !== EVENT_STATUS.PENDING &&
           event.status !== EVENT_STATUS.CANCELLED &&
@@ -132,19 +128,21 @@ const getAllEvents = async (perpage, page, club, user) => {
     }
   });
   if (user) {
-    return await Event.find(club == 'fcsc' ? { "faculty": "FCSC" } : {})
-      .sort({ startTime: -1 })
-      .limit(parseInt(perpage))
-      .skip((parseInt(page) - 1) * parseInt(page))
-      .select(['-speakers', '-photos', '-tags', '-attendees']);
-  } else {
-    return await Event.find(club == 'fcsc' ? { "faculty": "FCSC", status: { $not: { $eq: "Pending" } } } : { status: { $not: { $eq: "Pending" } } })
+    return Event.find(club == 'fcsc' ? { faculty: 'FCSC' } : {})
       .sort({ startTime: -1 })
       .limit(parseInt(perpage))
       .skip((parseInt(page) - 1) * parseInt(page))
       .select(['-speakers', '-photos', '-tags', '-attendees']);
   }
-
+  return Event.find(
+    club == 'fcsc'
+      ? { faculty: 'FCSC', status: { $not: { $eq: 'Pending' } } }
+      : { status: { $not: { $eq: 'Pending' } } }
+  )
+    .sort({ startTime: -1 })
+    .limit(parseInt(perpage))
+    .skip((parseInt(page) - 1) * parseInt(page))
+    .select(['-speakers', '-photos', '-tags', '-attendees']);
 };
 
 /**
@@ -153,16 +151,14 @@ const getAllEvents = async (perpage, page, club, user) => {
  * @returns {Query<Array<Document>, Document>}
  */
 const getLatestEvents = async (club) => {
-  const results = await Event.find(club == 'fcsc' ? { "faculty": "FCSC" } : {})
+  const results = await Event.find(club == 'fcsc' ? { faculty: 'FCSC' } : {})
     .or([{ status: 'Happening Now' }, { status: 'Upcoming' }])
     .sort({ status: 1, startTime: 1 })
     .select(['-attendees', '-speakers'])
     .limit(3);
 
   if (!results.length) {
-    const event = await Event.findOne(
-      club == 'fcsc' ? { "faculty": "FCSC" } : {}
-    )
+    const event = await Event.findOne(club == 'fcsc' ? { faculty: 'FCSC' } : {})
       .sort({ startTime: -1 })
       .select(['-attendees', '-speakers']);
     if (event) {
@@ -182,80 +178,65 @@ const getLatestEvents = async (club) => {
  */
 const updateEventByID = async (id, body, user) => {
   const event = await Event.findById(id);
-  validateRequest(
-    event,
-    user,
-    'You can only make changes to events published by your faculty'
-  );
-  const duplicateEvents = (
-    await Event.find({ name: body.name || event.name })
-  ).filter((e) => {
+  validateRequest(event, user, 'You can only make changes to events published by your faculty');
+  const duplicateEvents = (await Event.find({ name: body.name || event.name })).filter((e) => {
     if (
       JSON.stringify(e.faculty) === (JSON.stringify(body.faculty) || JSON.stringify(event.faculty)) &&
       new Date(e.startTime).toLocaleString().substring(0, 10) ===
-      ((body.startTime
-        ? new Date(body.startTime).toLocaleString().substring(0, 10)
-        : undefined) ||
-        new Date(event.startTime).toLocaleString().substring(0, 10))
+        ((body.startTime ? new Date(body.startTime).toLocaleString().substring(0, 10) : undefined) ||
+          new Date(event.startTime).toLocaleString().substring(0, 10))
     ) {
       return e;
     }
   });
   if (duplicateEvents.length > 0 && duplicateEvents[0]._id != id) {
-    throw new Error(
-      'There already is an event by the same name taking place on the same day by your faculty'
-    );
+    throw new Error('There already is an event by the same name taking place on the same day by your faculty');
   }
-  const eventName = body.name
-    ? body.name
-    : (await Event.findById(id).select(['name'])).name;
+  const eventName = body.name ? body.name : (await Event.findById(id).select(['name'])).name;
 
   if (body.headerImage && body.headerImage != event.headerImage) {
-    body.headerImage = await ImageUpload(
-      body.headerImage,
-      `${eventName}/headerImage`
-    );
+    body.headerImage = await ImageUpload(body.headerImage, `${eventName}/headerImage`);
   }
 
   if (body.speakers) {
     body.speakers = await uploadSpeakerPhotos(body.speakers, eventName);
   }
-  if ((user.role != 'Admin' && event.status == EVENT_STATUS.PENDING) || (body.status == EVENT_STATUS.PENDING && event.attendeeCount > 0)) {
-    delete body.status
+  if (
+    (user.role != 'Admin' && event.status == EVENT_STATUS.PENDING) ||
+    (body.status == EVENT_STATUS.PENDING && event.attendeeCount > 0)
+  ) {
+    delete body.status;
   }
   if (body.joinLink) {
     const attendees = event.attendees;
     await Promise.all(
       attendees.map(async function (attendee) {
-        const html = fs.readFileSync(
-          __basedir + '/html/emailTemplate.html',
-          'utf8'
-        );
+        const html = fs.readFileSync(`${global.__basedir}/html/emailTemplate.html`, 'utf8');
 
-        var template = handlebars.compile(html);
-        var replacements = {
+        const template = handlebars.compile(html);
+        const replacements = {
           title: 'UPDATED JOIN LINK',
           username: '',
           text: `Please note that the meeting link for ${event.name} has been updated as follows. We look foward to seeing you there!`,
           boxText: body.joinLink,
           buttonURL: body.joinLink,
-          buttonText: 'Join',
+          buttonText: 'Join'
         };
-        var htmlToSend = template(replacements);
-        var mailOptions = {
+        const htmlToSend = template(replacements);
+        const mailOptions = {
           from: ClientConst.CREDENTIALS.USER,
           to: attendee.email,
           subject: `${event.name} - Updated Join Link`,
-          html: htmlToSend,
+          html: htmlToSend
         };
         await MailService.sendMail(mailOptions);
       })
     );
   }
 
-  return await Event.findByIdAndUpdate(id, body, {
+  return Event.findByIdAndUpdate(id, body, {
     new: true,
-    runValidators: false,
+    runValidators: false
   });
 };
 
@@ -267,12 +248,8 @@ const updateEventByID = async (id, body, user) => {
  */
 const deleteEventById = async (id, user) => {
   const event = await Event.findById(id);
-  validateRequest(
-    event,
-    user,
-    'You can only delete events published by your faculty'
-  );
-  return await Event.findById(id, async function (err, event) {
+  validateRequest(event, user, 'You can only delete events published by your faculty');
+  return Event.findById(id, async function (err, event) {
     if (!err) {
       try {
         await ImageDelete(event.headerImage);
@@ -296,19 +273,17 @@ const getEventStatus = (startTime, endTime) => {
     return 'Upcoming';
   } else if (currentTime > startTime && currentTime < endTime) {
     return 'Happening Now';
-  } else {
-    return 'Closed';
   }
+  return 'Closed';
 };
 
-const uploadSpeakerPhotos = async (modifiedSpeakers, name) => {
-  return await Promise.all(
+const uploadSpeakerPhotos = (modifiedSpeakers, name) => {
+  return Promise.all(
     modifiedSpeakers.map(async function (speaker, index) {
       if (!speaker.photo.includes('https://firebasestorage.googleapis.com')) {
-        await ImageUpload(
-          speaker.photo,
-          `${name}/speaker` + index.toString()
-        ).then((imageURL) => (speaker.photo = imageURL));
+        await ImageUpload(speaker.photo, `${name}/speaker${index.toString()}`).then(
+          (imageURL) => (speaker.photo = imageURL)
+        );
       }
       return speaker;
     })
@@ -321,5 +296,5 @@ export default {
   getAllEvents,
   getLatestEvents,
   updateEventByID,
-  deleteEventById,
+  deleteEventById
 };

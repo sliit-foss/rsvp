@@ -1,8 +1,8 @@
-import User from '../models/user.model';
 import jsonwebtoken from 'jsonwebtoken';
-import { PRIV_KEY } from '../config';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import passport from 'passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PRIV_KEY } from '../config';
+import User from '../models/user.model';
 
 /**
  * Issue JWT
@@ -15,16 +15,16 @@ const issueJWT = (user) => {
 
   const payload = {
     sub: _id,
-    iat: Date.now(),
+    iat: Date.now()
   };
 
   const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, {
-    expiresIn: expiresIn,
+    expiresIn: expiresIn
   });
 
   return {
-    token: 'Bearer ' + signedToken,
-    expires: expiresIn,
+    token: `Bearer ${signedToken}`,
+    expires: expiresIn
   };
 };
 
@@ -35,7 +35,7 @@ const issueJWT = (user) => {
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: PRIV_KEY,
+  secretOrKey: PRIV_KEY
 };
 
 passport.use(
@@ -46,13 +46,12 @@ passport.use(
       }
       if (user) {
         return done(null, user);
-      } else {
-        return done(null, false);
       }
+      return done(null, false);
     });
   })
 );
 
 export default {
-  issueJWT,
+  issueJWT
 };

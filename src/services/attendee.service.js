@@ -1,9 +1,9 @@
+import fs from 'fs';
+import handlebars from 'handlebars';
+import ClientConst from '../constants/mail.constants';
 import { validateRequest } from '../middleware/requestValidator';
 import Event from '../models/event.model';
 import MailService from './mail.service';
-import ClientConst from '../constants/mail.constants';
-import handlebars from 'handlebars';
-import fs from 'fs';
 
 /**
  *
@@ -39,31 +39,28 @@ const attendEvent = async (id, body) => {
         year: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
-        hour12: true,
+        hour12: true
       })
       .replace(',', ' ');
 
-    const html = fs.readFileSync(
-      __basedir + '/html/emailTemplate.html',
-      'utf8'
-    );
+    const html = fs.readFileSync(`${global.__basedir}/html/emailTemplate.html`, 'utf8');
 
-    var template = handlebars.compile(html);
-    var replacements = {
+    const template = handlebars.compile(html);
+    const replacements = {
       title: 'JOIN LINK',
       username: '',
       text: `Thank you for registering for ${event.name}. Please use the following link to join us on the scheduled date ( ${eventDate} ). We look foward to seeing you there!`,
       boxText: event.joinLink,
       buttonURL: event.joinLink,
-      buttonText: 'Join',
+      buttonText: 'Join'
     };
-    var htmlToSend = template(replacements);
+    const htmlToSend = template(replacements);
 
-    var mailOptions = {
+    const mailOptions = {
       from: ClientConst.CREDENTIALS.USER,
       to: body.email,
       subject: `${event.name} Join Link`,
-      html: htmlToSend,
+      html: htmlToSend
     };
     await MailService.sendMail(mailOptions);
   }
@@ -72,12 +69,12 @@ const attendEvent = async (id, body) => {
 
   body = {
     attendeeCount: (event.attendeeCount += 1),
-    attendees: attendees,
+    attendees: attendees
   };
 
-  return await Event.findByIdAndUpdate(id, body, {
+  return Event.findByIdAndUpdate(id, body, {
     new: true,
-    runValidators: false,
+    runValidators: false
   });
 };
 
@@ -89,11 +86,7 @@ const attendEvent = async (id, body) => {
  */
 const getAttendees = async (id, user) => {
   const event = await Event.findById(id);
-  validateRequest(
-    event,
-    user,
-    'You can only view attendees of events published by your faculty'
-  );
+  validateRequest(event, user, 'You can only view attendees of events published by your faculty');
   const results = await Event.findById(id).select(['attendees']);
   if (!results) {
     throw { message: `Event not found with id:${id}` };
@@ -103,5 +96,5 @@ const getAttendees = async (id, user) => {
 
 export default {
   attendEvent,
-  getAttendees,
+  getAttendees
 };

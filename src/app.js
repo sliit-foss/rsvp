@@ -1,15 +1,15 @@
 import express from 'express';
-import cors from 'cors';
 import session from 'express-session';
+import cors from 'cors';
+import createMemoryStore from 'memorystore';
+import morgan from 'morgan';
 import passport from 'passport';
-import { default as connect } from './utils/database';
-import { default as initialize } from './utils/firebase';
-import router from './routes/index.routes';
+import LocalStrategy from 'passport-local';
 import { SESSION_SECRET } from './config';
 import User from './models/user.model';
-import LocalStrategy from 'passport-local';
-import morgan from 'morgan';
-import createMemoryStore from 'memorystore';
+import router from './routes/index.routes';
+import { default as connect } from './utils/database';
+import { default as initialize } from './utils/firebase';
 
 const MemoryStore = createMemoryStore(session);
 const app = express();
@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: false }));
 
-//ENABLING SESSION
+// ENABLING SESSION
 app.set('trust proxy', 1); // trust first proxy
 app.use(
   session({
@@ -25,8 +25,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new MemoryStore({
-      checkPeriod: 86400000,
-    }),
+      checkPeriod: 86400000
+    })
   })
 );
 
@@ -44,6 +44,6 @@ app.use(morgan('dev'));
 connect();
 initialize();
 
-global.__basedir = __dirname;
+global.global.__basedir = __dirname;
 
 export default app;

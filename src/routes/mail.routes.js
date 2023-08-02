@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import MailController from '../controllers/mail.controller';
-import { sendMailSchema } from '../requests/mail.request';
 import { joiValidator } from '../middleware/requestValidator';
+import { sendMailSchema } from '../requests/mail.request';
 
 const router = Router();
 

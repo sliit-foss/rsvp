@@ -1,9 +1,9 @@
 import fs from 'fs';
-import User from '../models/user.model';
-import MailService from './mail.service';
+import handlebars from 'handlebars';
 import ClientConst from '../constants/mail.constants';
 import { validateAdminRequest } from '../middleware/requestValidator';
-import handlebars from 'handlebars';
+import User from '../models/user.model';
+import MailService from './mail.service';
 
 /**
  * Create user in db
@@ -20,15 +20,15 @@ const createUser = async (req) => {
     username,
     email,
     role,
-    faculty,
+    faculty
   });
 
   const createdUser = await User.register(user, password);
 
-  const html = fs.readFileSync(__basedir + '/html/emailTemplate.html', 'utf8');
+  const html = fs.readFileSync(`${global.__basedir}/html/emailTemplate.html`, 'utf8');
 
-  var template = handlebars.compile(html);
-  var replacements = {
+  const template = handlebars.compile(html);
+  const replacements = {
     title: 'WELCOME',
     username: username,
     text: `You have been assigned as ${
@@ -37,27 +37,27 @@ const createUser = async (req) => {
     You may reset this password by visiting your account info section of the management panel`,
     boxText: password,
     buttonURL: 'https://rsvp.sliitfoss.org/login',
-    buttonText: 'Login',
+    buttonText: 'Login'
   };
-  var htmlToSend = template(replacements);
+  const htmlToSend = template(replacements);
 
   const mailOptions = {
     from: ClientConst.CREDENTIALS.USER,
     to: email,
     subject: 'RSVP Login Access',
-    html: htmlToSend,
+    html: htmlToSend
   };
   try {
     await MailService.sendMail(mailOptions);
     return {
       success: true,
-      data: createdUser,
+      data: createdUser
     };
   } catch (err) {
     await User.findByIdAndDelete(createdUser._id);
     return {
       success: false,
-      error: err,
+      error: err
     };
   }
 };
@@ -103,7 +103,7 @@ const changeUserPassword = async (req) => {
   const { newPassword } = req.body;
   if (!newPassword) {
     throw {
-      message: 'Please specify a new user password',
+      message: 'Please specify a new user password'
     };
   }
   const user = await User.findById(req.user.id);
@@ -117,5 +117,5 @@ export default {
   getAllUsers,
   getMyUserData,
   deleteUserById,
-  changeUserPassword,
+  changeUserPassword
 };

@@ -6,13 +6,12 @@ import { default as mongoConnect } from './src/utils/database';
  * order is important
  * @type {Object}
  */
-export const seedersList = {
-};
+export const seedersList = {};
 /**
  * Connect to mongodb implementation
  * @return {Promise}
  */
-export const connect = async () => mongoConnect()
+export const connect = async () => mongoConnect();
 /**
  * Drop/Clear the database implementation
  * @return {Promise}
